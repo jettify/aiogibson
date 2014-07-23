@@ -1,4 +1,3 @@
-
 PYTHON ?= python3
 FLAKE ?= pyflakes
 PEP ?= pep8
@@ -14,10 +13,10 @@ flake:
 	$(PEP) aiogibson tests examples
 
 test:
-	REDIS_VERSION=$(REDIS_VERSION) $(PYTHON) runtests.py -v
+	$(PYTHON) runtests.py -v
 
 cov coverage:
-	REDIS_VERSION=$(REDIS_VERSION) $(PYTHON) runtests.py --coverage
+	$(PYTHON) runtests.py --coverage
 
 clean:
 	find . -name __pycache__ |xargs rm -rf
