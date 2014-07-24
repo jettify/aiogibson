@@ -22,6 +22,10 @@ class ReplyError(GibsonError):
     """Generic error while executing the query"""
 
 
+class GibsonServerError(GibsonError):
+    """Unknown error on gibson server"""
+
+
 class ExpectedANumber(GibsonError):
     """Expected a number ( TTL or TIME ) but the specified value
     was invalid."""

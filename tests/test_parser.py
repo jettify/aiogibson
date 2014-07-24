@@ -1,4 +1,6 @@
 import unittest
+from aiogibson import ProtocolError, ExpectedANumber, MemoryLimitError, \
+    KeyLockedError, GibsonError
 from aiogibson.parser import Reader, encode_command
 
 
@@ -33,6 +35,7 @@ class ParserTest(unittest.TestCase):
     def test_chunked_read(self):
         parser = Reader()
         data = [b'\x06\x00', b'\x00', b'\x03', b'\x00\x00', b'\x00', b'bar']
+        parser.feed_data(b'')
         for i, b in enumerate(data):
             parser.feed_data(b)
             obj = parser.gets()
@@ -49,6 +52,48 @@ class ParserTest(unittest.TestCase):
                 self.assertEqual(obj, [b'zap'])
             else:
                 self.assertEqual(obj, False)
+
+    def test_err_generic(self):
+        data = b'\x00\x00\x00\x01\x00\x00\x00\x00'
+        parser = Reader()
+        parser.feed_data(data)
+        obj = parser.gets()
+        self.assertIsInstance(obj, GibsonError)
+
+    def test_err_nan(self):
+        data = b'\x02\x00\x00\x01\x00\x00\x00\x00'
+        parser = Reader()
+        parser.feed_data(data)
+        obj = parser.gets()
+        self.assertIsInstance(obj, ExpectedANumber)
+
+    def test_err_mem(self):
+        data = b'\x03\x00\x00\x01\x00\x00\x00\x00'
+        parser = Reader()
+        parser.feed_data(data)
+        obj = parser.gets()
+        self.assertIsInstance(obj, MemoryLimitError)
+
+    def test_err_locked(self):
+        data = b'\x04\x00\x00\x01\x00\x00\x00\x00'
+        parser = Reader()
+        parser.feed_data(data)
+        obj = parser.gets()
+        self.assertIsInstance(obj, KeyLockedError)
+
+    def test_ok(self):
+        data = b'\x05\x00\x00\x01\x00\x00\x00\x00'
+        parser = Reader()
+        parser.feed_data(data)
+        obj = parser.gets()
+        self.assertEqual(obj, True)
+
+    def test_protocol_error(self):
+        data = b'\x09\x00\x00\x01\x00\x00\x00\x00'
+        parser = Reader()
+        parser.feed_data(data)
+        obj = parser.gets()
+        self.assertIsInstance(obj, ProtocolError)
 
     def test_encode_set(self):
         res = encode_command(b'set', b'3600', b'foo', b'bar')

@@ -8,8 +8,12 @@ loop = asyncio.get_event_loop()
 def go():
     conn = yield from aiogibson.create_connection(
         ('localhost', 10128), loop=loop)
-    result1 = yield from conn.execute(b'set', b'3600', b'foo1', b'bar1')
-    result2 = yield from conn.execute(b'mget', b'fo')
-    print(result1, result2)
+    # result1 = yield from conn.execute(b'set', b'3600', b'foo1', b'bar1')
+    # result2 = yield from conn.execute(b'mget', b'fo')
+
+    # print(result1, result2)
+    result3 = yield from conn.execute(b'set', b'asdf', b'ad')
+    print(result3)
+
 
 loop.run_until_complete(go())

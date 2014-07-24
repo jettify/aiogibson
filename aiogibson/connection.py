@@ -22,14 +22,14 @@ def create_connection(address, *, loop=None):
     else:
         reader, writer = yield from asyncio.open_unix_connection(
             address, loop=loop)
-    conn = GibsonConnection(reader, writer, loop=loop)
+    conn = GibsonConnection(reader, writer, address=address, loop=loop)
     return conn
 
 
 class GibsonConnection:
     """Redis connection."""
 
-    def __init__(self, reader, writer, *, loop=None):
+    def __init__(self, reader, writer, address, *, loop=None):
         if loop is None:
             loop = asyncio.get_event_loop()
         self._reader = reader
@@ -41,9 +41,10 @@ class GibsonConnection:
         self._db = 0
         self._closing = False
         self._closed = False
+        self._address = address
 
     def __repr__(self):
-        return '<GibsonConnection {}>'.format(id(self))
+        return '<GibsonConnection {}:{}>'.format(self._address)
 
     @asyncio.coroutine
     def _read_data(self):

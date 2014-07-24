@@ -24,6 +24,7 @@ class Reader(object):
         if not data:
             return
         self._buffer.extend(data)
+        print(data)
 
     def gets(self):
         """
@@ -52,7 +53,7 @@ class Reader(object):
 
     def _parse_replay(self, code, data):
         if code == consts.REPL_ERR:
-            return
+            return errors.GibsonServerError()
         elif code == consts.REPL_OK:
             return True
         elif code == consts.REPL_ERR_NOT_FOUND:
@@ -60,7 +61,7 @@ class Reader(object):
         elif code == consts.REPL_ERR_NAN:
             return errors.ExpectedANumber()
         elif code == consts.REPL_ERR_MEM:
-            return errors.ExpectedANumber()
+            return errors.MemoryLimitError()
         elif code == consts.REPL_ERR_LOCKED:
             return errors.KeyLockedError()
         elif code == consts.REPL_VAL:
@@ -68,24 +69,24 @@ class Reader(object):
         elif code == consts.REPL_KVAL:
             return self._parse_kv(data)
         else:
-            raise errors.GibsonError()
+            raise errors.ProtocolError()
 
     def _parse_kv(self, data):
         entities_num = struct.unpack('I', data[:4])[0]
-        entities = self._parse_entity(data[4:])
-        if not entities_num*2 == len(entities):
-            raise errors.ProtocolError
+        entities = [None]*entities_num*2
+        entities = self._parse_entity(entities, 0, data[4:])
         return entities
 
-    def _parse_entity(self, data, encoding=False):
+    def _parse_entity(self, result, cursor, data, encoding=False):
         if not data:
-            return []
+            return result
         offset = int(encoding)
         entity_size = struct.unpack('I', data[offset:4 + offset])[0]
         entity = data[4 + offset: 4 + offset + entity_size]
         _data = data[4 + offset + entity_size:]
-        tail = self._parse_entity(_data, not encoding)
-        return [bytes(entity)] + tail
+        result[cursor] = bytes(entity)
+        result = self._parse_entity(result, cursor+1, _data, not encoding)
+        return result
 
     def _parse_values(self, data):
         return [bytes(v) for v in data.split()]
