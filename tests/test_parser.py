@@ -92,8 +92,8 @@ class ParserTest(unittest.TestCase):
         data = b'\x09\x00\x00\x01\x00\x00\x00\x00'
         parser = Reader()
         parser.feed_data(data)
-        obj = parser.gets()
-        self.assertIsInstance(obj, ProtocolError)
+        with self.assertRaises(ProtocolError):
+            parser.gets()
 
     def test_encode_set(self):
         res = encode_command(b'set', b'3600', b'foo', b'bar')

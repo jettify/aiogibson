@@ -24,7 +24,6 @@ class Reader(object):
         if not data:
             return
         self._buffer.extend(data)
-        print(data)
 
     def gets(self):
         """
