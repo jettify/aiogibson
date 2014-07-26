@@ -1,4 +1,4 @@
-"""Run aioredis unittests.
+"""Run aiogibson unittests.
 
 Usage:
   python3 runtests.py [flags] [pattern] ...

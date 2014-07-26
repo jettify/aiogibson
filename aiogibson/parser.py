@@ -3,6 +3,9 @@ from . import consts
 from . import errors
 
 
+__all__ = ['encode_command', 'Reader']
+
+
 class Reader(object):
     """XXX"""
 

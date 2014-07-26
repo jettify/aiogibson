@@ -27,7 +27,7 @@ def create_connection(address, *, loop=None):
 
 
 class GibsonConnection:
-    """Redis connection."""
+    """Gibson connection."""
 
     def __init__(self, reader, writer, address, *, loop=None):
         if loop is None:
@@ -38,7 +38,6 @@ class GibsonConnection:
         self._waiters = asyncio.Queue(loop=self._loop)
         self._parser = Reader()
         self._reader_task = asyncio.Task(self._read_data(), loop=self._loop)
-        self._db = 0
         self._closing = False
         self._closed = False
         self._address = address

@@ -43,9 +43,7 @@ class Gibson:
 
 
 @asyncio.coroutine
-def create_gibson(address, *, db=None, password=None,
-                  encoding=None, commands_factory=Gibson,
-                  loop=None):
+def create_gibson(address, *, commands_factory=Gibson, loop=None):
     """Creates high-level Gibson interface.
     """
     conn = yield from create_connection(address, loop=loop)
