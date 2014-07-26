@@ -37,6 +37,10 @@ class Gibson:
             raise TypeError("key must be instance of bytes")
         return (yield from self._conn.execute(b'delete', key))
 
+    @asyncio.coroutine
+    def ping(self):
+        return (yield from self._conn.execute(b'ping'))
+
 
 @asyncio.coroutine
 def create_gibson(address, *, db=None, password=None,

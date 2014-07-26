@@ -9,9 +9,9 @@ def create_pool(address, *, db=0, password=None, encoding=None,
     """XXX"""
 
     pool = GibsonPool(address, db, password, encoding,
-                     minsize=minsize, maxsize=maxsize,
-                     commands_factory=commands_factory,
-                     loop=loop)
+                      minsize=minsize, maxsize=maxsize,
+                      commands_factory=commands_factory,
+                      loop=loop)
     yield from pool._fill_free()
     return pool
 
@@ -139,11 +139,8 @@ class GibsonPool:
     @asyncio.coroutine
     def _create_new_connection(self):
         conn = yield from create_gibson(self._address,
-                                       db=self._db,
-                                       password=self._password,
-                                       encoding=self._encoding,
-                                       commands_factory=self._factory,
-                                       loop=self._loop)
+                                        commands_factory=self._factory,
+                                        loop=self._loop)
         return conn
 
     def __enter__(self):
