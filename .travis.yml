@@ -12,7 +12,7 @@ install:
 - tar xfv 1.0.2.tar.gz
 - cd gibson-1.0.2
 - cmake . && make
-- gibson --address 127.0.0.1 --port 10128 --logfile ./g.log --pidfile pid1
+- ./gibson --address 127.0.0.1 --port 10128 --logfile ./g.log --pidfile pid1
 - cd ../
 
 script:
