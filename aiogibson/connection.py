@@ -44,7 +44,7 @@ class GibsonConnection:
         self._address = address
 
     def __repr__(self):
-        return '<GibsonConnection {}:{}>'.format(self._address)
+        return '<GibsonConnection {}>'.format(self._address)
 
     @asyncio.coroutine
     def _read_data(self):
