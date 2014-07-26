@@ -1,6 +1,6 @@
 import asyncio
 
-from aiogibson.connection import create_connection
+from .connection import create_connection
 
 __all__ = ['create_gibson', 'Gibson']
 

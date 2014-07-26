@@ -1,3 +1,11 @@
+"""
+Constants for gibson binary protocol
+
+:see: http://gibson-db.in/protocol/
+:see: https://github.com/evilsocket/gibson/blob/unstable/src/query.h
+"""
+
+# single
 OP_SET = 0x01
 OP_TTL = 0x02
 OP_GET = 0x03
@@ -6,6 +14,7 @@ OP_INC = 0x05
 OP_DEC = 0x06
 OP_LOCK = 0x07
 OP_UNLOCK = 0x08
+# multi
 OP_MSET = 0x09
 OP_MTTL = 0x0A
 OP_MGET = 0x0B
@@ -14,6 +23,7 @@ OP_MINC = 0x0D
 OP_MDEC = 0x0E
 OP_MLOCK = 0x0F
 OP_MUNLOCK = 0x10
+# other
 OP_COUNT = 0x11
 OP_STATS = 0x12
 OP_PING = 0x13
@@ -58,5 +68,7 @@ REPL_VAL = 0x06
 REPL_KVAL = 0x07
 
 
-HEADER_SIZE = 7
 OP_CODE_SIZE = 2
+ENCODING_SIZE = 1
+REPL_SIZE = 4  # size of block where size of data stored
+HEADER_SIZE = OP_CODE_SIZE + ENCODING_SIZE + REPL_SIZE

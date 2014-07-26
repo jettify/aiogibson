@@ -74,18 +74,22 @@ class Reader(object):
             raise errors.ProtocolError()
 
     def _parse_kv(self, data):
-        entities_num = struct.unpack('I', data[:4])[0]
+        entities_num = struct.unpack('I', data[:consts.REPL_SIZE])[0]
         entities = [None]*entities_num*2
-        entities = self._parse_entity(entities, 0, data[4:])
+        entities = self._parse_entity(entities, 0, data[consts.REPL_SIZE:])
         return entities
 
     def _parse_entity(self, result, cursor, data, encoding=False):
         if not data:
             return result
         offset = int(encoding)
-        entity_size = struct.unpack('I', data[offset:4 + offset])[0]
-        entity = data[4 + offset: 4 + offset + entity_size]
-        _data = data[4 + offset + entity_size:]
+
+        entity_size = struct.unpack('I',
+                                    data[offset:consts.REPL_SIZE + offset])[0]
+        _start = consts.REPL_SIZE + offset
+        _end = consts.REPL_SIZE + offset + entity_size
+        entity = data[_start: _end]
+        _data = data[consts.REPL_SIZE + offset + entity_size:]
         result[cursor] = bytes(entity)
         result = self._parse_entity(result, cursor+1, _data, not encoding)
         return result
