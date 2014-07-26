@@ -44,8 +44,5 @@ def create_gibson(address, *, db=None, password=None,
                   loop=None):
     """Creates high-level Gibson interface.
     """
-    conn = yield from create_connection(address, db=db,
-                                        password=password,
-                                        encoding=encoding,
-                                        loop=loop)
+    conn = yield from create_connection(address, loop=loop)
     return commands_factory(conn)

@@ -1,23 +1,14 @@
 import asyncio
 
-from .commands import create_redis, Redis
+from .commands import create_gibson, Gibson
 
 
 @asyncio.coroutine
 def create_pool(address, *, db=0, password=None, encoding=None,
-                minsize=10, maxsize=10, commands_factory=Redis, loop=None):
-    """Creates Redis Pool.
+                minsize=10, maxsize=10, commands_factory=Gibson, loop=None):
+    """XXX"""
 
-    By default it creates pool of commands_factory instances, but it is
-    also possible to create pool of plain connections by passing
-    ``lambda conn: conn`` as commands_factory.
-
-    All artuments are the same as for create_connection.
-
-    Returns RedisPool instance.
-    """
-
-    pool = RedisPool(address, db, password, encoding,
+    pool = GibsonPool(address, db, password, encoding,
                      minsize=minsize, maxsize=maxsize,
                      commands_factory=commands_factory,
                      loop=loop)
@@ -25,8 +16,8 @@ def create_pool(address, *, db=0, password=None, encoding=None,
     return pool
 
 
-class RedisPool:
-    """Redis connections pool.
+class GibsonPool:
+    """Gibson connections pool.
     """
 
     def __init__(self, address, db=0, password=None, encoding=None,
@@ -34,9 +25,6 @@ class RedisPool:
         if loop is None:
             loop = asyncio.get_event_loop()
         self._address = address
-        self._db = db
-        self._password = password
-        self._encoding = encoding
         self._minsize = minsize
         self._factory = commands_factory
         self._loop = loop
@@ -150,7 +138,7 @@ class RedisPool:
 
     @asyncio.coroutine
     def _create_new_connection(self):
-        conn = yield from create_redis(self._address,
+        conn = yield from create_gibson(self._address,
                                        db=self._db,
                                        password=self._password,
                                        encoding=self._encoding,
