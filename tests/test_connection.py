@@ -3,6 +3,9 @@ from aiogibson import create_connection
 
 
 class ConnectionTest(BaseTest):
+    """
+
+    """
 
     @run_until_complete
     def test_connect_unixsocket(self):

@@ -22,20 +22,41 @@ class Gibson:
         if not isinstance(key, bytes):
             raise TypeError("key must be instance of bytes")
         result = yield from self._conn.execute(b'get', key)
-        return result[0]
+        # TODO: rethink parser for single value
+        return result[0] if result else result
 
     @asyncio.coroutine
     def set(self, key, value, ttl=0):
         if not isinstance(key, bytes):
             raise TypeError("key must be instance of bytes")
-        ttl = str(ttl).encode('utf-8')
-        return (yield from self._conn.execute(b'get', ttl, key, value))
+        result = yield from self._conn.execute(b'set', ttl, key, value)
+        return result[0]
 
     @asyncio.coroutine
     def delete(self, key):
         if not isinstance(key, bytes):
             raise TypeError("key must be instance of bytes")
-        return (yield from self._conn.execute(b'delete', key))
+        return (yield from self._conn.execute(b'del', key))
+
+    @asyncio.coroutine
+    def ttl(self, key, ttl):
+        if not isinstance(key, bytes):
+            raise TypeError("key must be instance of bytes")
+        return (yield from self._conn.execute(b'ttl', key, ttl))
+
+    @asyncio.coroutine
+    def inc(self, key):
+        if not isinstance(key, bytes):
+            raise TypeError("key must be instance of bytes")
+        result = yield from self._conn.execute(b'inc', key)
+        return result[0]
+
+    @asyncio.coroutine
+    def dec(self, key):
+        if not isinstance(key, bytes):
+            raise TypeError("key must be instance of bytes")
+        result = yield from self._conn.execute(b'dec', key)
+        return result[0]
 
     @asyncio.coroutine
     def ping(self):

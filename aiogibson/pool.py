@@ -1,14 +1,20 @@
+"""
+Borrowed from aioredi.
+
+:see: https://github.com/aio-libs/aioredis/blob/master/aioredis/pool.py
+"""
+
 import asyncio
 
 from .commands import create_gibson, Gibson
 
 
 @asyncio.coroutine
-def create_pool(address, *, db=0, password=None, encoding=None,
-                minsize=10, maxsize=10, commands_factory=Gibson, loop=None):
+def create_pool(address, *, minsize=10, maxsize=10, commands_factory=Gibson,
+                loop=None):
     """XXX"""
 
-    pool = GibsonPool(address, db, password, encoding,
+    pool = GibsonPool(address,
                       minsize=minsize, maxsize=maxsize,
                       commands_factory=commands_factory,
                       loop=loop)

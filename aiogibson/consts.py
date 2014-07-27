@@ -5,6 +5,7 @@ Constants for gibson binary protocol
 :see: https://github.com/evilsocket/gibson/blob/unstable/src/query.h
 """
 
+# OPERATION CODES
 # single
 OP_SET = 0x01
 OP_TTL = 0x02
@@ -56,6 +57,17 @@ command_map = {
     b'keys': OP_KEYS,
     b'end': OP_END
 }
+
+
+# ENCODING
+# Raw string data follows.
+GB_ENC_PLAIN = 0x00
+# Compressed data, this is a **reserved** value not used for replies.
+GB_ENC_LZF = 0x01
+# Packed **long** number follows, four bytes for 32bit architectures,
+# eight bytes for 64bit.
+GB_ENC_NUMBER = 0x02
+
 
 # **Reply**
 REPL_ERR = 0x00

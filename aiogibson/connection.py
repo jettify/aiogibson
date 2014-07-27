@@ -1,3 +1,9 @@
+"""
+Borrowed from aioredis.
+
+:see: https://github.com/aio-libs/aioredis/blob/master/aioredis/connection.py
+"""
+
 import asyncio
 
 from .errors import GibsonError, ProtocolError
@@ -7,10 +13,11 @@ from .parser import Reader, encode_command
 __all__ = ['create_connection', 'GibsonConnection']
 
 MAX_CHUNK_SIZE = 65536
+_NOTSET = object()
 
 
 @asyncio.coroutine
-def create_connection(address, *, loop=None):
+def create_connection(address, *, encoding=None, loop=None):
     """Creates GibsonConnection connection.
     """
     assert isinstance(address, (tuple, list, str)), "tuple or str expected"
@@ -22,14 +29,15 @@ def create_connection(address, *, loop=None):
     else:
         reader, writer = yield from asyncio.open_unix_connection(
             address, loop=loop)
-    conn = GibsonConnection(reader, writer, address=address, loop=loop)
+    conn = GibsonConnection(reader, writer, address=address,
+                            encoding=encoding, loop=loop)
     return conn
 
 
 class GibsonConnection:
     """Gibson connection."""
 
-    def __init__(self, reader, writer, address, *, loop=None):
+    def __init__(self, reader, writer, address, *, encoding=None, loop=None):
         if loop is None:
             loop = asyncio.get_event_loop()
         self._reader = reader
@@ -41,6 +49,7 @@ class GibsonConnection:
         self._closing = False
         self._closed = False
         self._address = address
+        self._encoding = encoding
 
     def __repr__(self):
         return '<GibsonConnection {}>'.format(self._address)
@@ -72,7 +81,7 @@ class GibsonConnection:
         self._loop.call_soon(self._do_close, None)
 
     @asyncio.coroutine
-    def execute(self, command, *args):
+    def execute(self, command, *args, encoding=_NOTSET):
         assert self._reader and not self._reader.at_eof(), (
             "Connection closed or corrupted")
         command = command.strip()
@@ -82,6 +91,10 @@ class GibsonConnection:
         fut = asyncio.Future(loop=self._loop)
         yield from self._waiters.put(fut)
         result = yield from fut
+        if encoding is _NOTSET:
+            encoding = self._encoding
+        if encoding is not None and isinstance(result, bytes):
+            return result.decode(encoding)
         return result
 
     def close(self):
@@ -113,3 +126,8 @@ class GibsonConnection:
             self._closing = closed = True
             self._loop.call_soon(self._do_close, None)
         return closed
+
+    @property
+    def encoding(self):
+        """Current set codec or None."""
+        return self._encoding
