@@ -21,16 +21,13 @@ class Gibson:
     def get(self, key):
         if not isinstance(key, bytes):
             raise TypeError("key must be instance of bytes")
-        result = yield from self._conn.execute(b'get', key)
-        # TODO: rethink parser for single value
-        return result[0] if result else result
+        return (yield from self._conn.execute(b'get', key))
 
     @asyncio.coroutine
-    def set(self, key, value, ttl=0):
+    def set(self, key, value, expire=0):
         if not isinstance(key, bytes):
             raise TypeError("key must be instance of bytes")
-        result = yield from self._conn.execute(b'set', ttl, key, value)
-        return result[0]
+        return (yield from self._conn.execute(b'set', expire, key, value))
 
     @asyncio.coroutine
     def delete(self, key):
@@ -39,24 +36,46 @@ class Gibson:
         return (yield from self._conn.execute(b'del', key))
 
     @asyncio.coroutine
-    def ttl(self, key, ttl):
+    def ttl(self, key, expire):
         if not isinstance(key, bytes):
             raise TypeError("key must be instance of bytes")
-        return (yield from self._conn.execute(b'ttl', key, ttl))
+        return (yield from self._conn.execute(b'ttl', key, expire))
 
     @asyncio.coroutine
     def inc(self, key):
         if not isinstance(key, bytes):
             raise TypeError("key must be instance of bytes")
-        result = yield from self._conn.execute(b'inc', key)
-        return result[0]
+        return (yield from self._conn.execute(b'inc', key))
 
     @asyncio.coroutine
     def dec(self, key):
         if not isinstance(key, bytes):
             raise TypeError("key must be instance of bytes")
-        result = yield from self._conn.execute(b'dec', key)
-        return result[0]
+        return (yield from self._conn.execute(b'dec', key))
+
+    @asyncio.coroutine
+    def lock(self, key, expire=0):
+        if not isinstance(key, bytes):
+            raise TypeError("key must be instance of bytes")
+        result = yield from self._conn.execute(b'lock', key, expire)
+        return result
+
+    @asyncio.coroutine
+    def unlock(self, key):
+        if not isinstance(key, bytes):
+            raise TypeError("key must be instance of bytes")
+        result = yield from self._conn.execute(b'unlock', key)
+        return result
+
+    @asyncio.coroutine
+    def keys(self, prefix):
+        result = yield from self._conn.execute(b'keys', prefix)
+        return result
+
+    @asyncio.coroutine
+    def stats(self):
+        result = yield from self._conn.execute(b'stats')
+        return result
 
     @asyncio.coroutine
     def ping(self):
