@@ -14,19 +14,11 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(obj, None)
 
     def test_val(self):
-        data = b'\x06\x00\x00\x03\x00\x00\x00bar'
-        parser = Reader()
-        parser.feed_data(data)
-        obj = parser.gets()
-        self.assertEqual(obj, b'bar')
-
-    def test_val(self):
         data = b'\x06\x00\x05\x03\x00\x00\x00bar'
         parser = Reader()
         parser.feed_data(data)
         with self.assertRaises(ProtocolError):
             parser.gets()
-
 
     def test_kv(self):
         data = b'\x07\x00\x007\x00\x00\x00\x03\x00\x00\x00\x04\x00\x00\x00' \

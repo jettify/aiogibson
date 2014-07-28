@@ -80,7 +80,8 @@ class Reader(object):
 
         for i in range(pairs_num):
             # unpack key size
-            key_size = struct.unpack('I', data[offset: offset + consts.REPL_SIZE])[0]
+            key_size = \
+                struct.unpack('I', data[offset: offset + consts.REPL_SIZE])[0]
             offset += consts.REPL_SIZE
             # unpack key
             key = bytes(data[offset: offset + key_size])
@@ -90,10 +91,12 @@ class Reader(object):
             value_gb_encodig = struct.unpack('B', data[offset: offset + 1])[0]
             offset += 1
             # unpack value size
-            value_size = struct.unpack('I', data[offset: offset + consts.REPL_SIZE])[0]
+            value_size = \
+                struct.unpack('I', data[offset: offset + consts.REPL_SIZE])[0]
             offset += consts.REPL_SIZE
             # unpack value
-            value = self._parse_value(data[offset: offset + value_size], value_gb_encodig)
+            value = self._parse_value(data[offset: offset + value_size],
+                                      value_gb_encodig)
             result.append(value)
             offset += value_size
         return result
@@ -105,6 +108,7 @@ class Reader(object):
             return bytes(data)
         else:
             raise errors.ProtocolError()
+
     def _reset(self):
         self._payload = bytearray()
         self._is_header = False

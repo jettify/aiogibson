@@ -74,7 +74,6 @@ class CommandsTest(GibsonTest):
             yield from self.gibson.set(key, value)
         yield from self.gibson.unlock(key)
 
-
     def test_unlock(self):
         key, value = b'test:unlock', b'zap'
         resp = yield from self.gibson.set(key, value)
@@ -87,7 +86,7 @@ class CommandsTest(GibsonTest):
 
         resp = yield from self.gibson.unlock(key)
         self.assertEqual(resp, True)
-        res = yield from self.gibson.set(key, 'foo')
+        resp = yield from self.gibson.set(key, 'foo')
         self.assertEqual(resp, b'foo')
 
     @run_until_complete
