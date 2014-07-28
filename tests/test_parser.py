@@ -18,7 +18,15 @@ class ParserTest(unittest.TestCase):
         parser = Reader()
         parser.feed_data(data)
         obj = parser.gets()
-        self.assertEqual(obj, [b'bar'])
+        self.assertEqual(obj, b'bar')
+
+    def test_val(self):
+        data = b'\x06\x00\x05\x03\x00\x00\x00bar'
+        parser = Reader()
+        parser.feed_data(data)
+        with self.assertRaises(ProtocolError):
+            parser.gets()
+
 
     def test_kv(self):
         data = b'\x07\x00\x007\x00\x00\x00\x03\x00\x00\x00\x04\x00\x00\x00' \
@@ -40,7 +48,7 @@ class ParserTest(unittest.TestCase):
             parser.feed_data(b)
             obj = parser.gets()
             if i == len(data)-1:
-                self.assertEqual(obj, [b'bar'])
+                self.assertEqual(obj, b'bar')
             else:
                 self.assertEqual(obj, False)
 
@@ -49,7 +57,7 @@ class ParserTest(unittest.TestCase):
             parser.feed_data(b)
             obj = parser.gets()
             if i == len(data2) - 1:
-                self.assertEqual(obj, [b'zap'])
+                self.assertEqual(obj, b'zap')
             else:
                 self.assertEqual(obj, False)
 
@@ -95,6 +103,18 @@ class ParserTest(unittest.TestCase):
         with self.assertRaises(ProtocolError):
             parser.gets()
 
-    def test_encode_set(self):
-        res = encode_command(b'set', b'3600', b'foo', b'bar')
-        self.assertEqual(res, b'\x0e\x00\x00\x00\x01\x003600 foo bar')
+    def test_gb_encoding(self):
+        data = b'\x06\x00\x02\x08\x00\x00\x00M\x00\x00\x00\x00\x00\x00\x00'
+        parser = Reader()
+        parser.feed_data(data)
+        obj = parser.gets()
+        self.assertEqual(obj, 77)
+
+    def test_encode_command_set(self):
+        res = encode_command(b'set', 3600, 'foo', 3.14)
+        self.assertEqual(res, b'\x0f\x00\x00\x00\x01\x003600 foo 3.14')
+        res = encode_command(b'set', 3600, b'foo', bytearray(b'Q'))
+        self.assertEqual(res, b'\x0c\x00\x00\x00\x01\x003600 foo Q')
+
+        with self.assertRaises(TypeError):
+            encode_command(b'set', b'3600', b'foo', object())

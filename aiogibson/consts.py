@@ -29,7 +29,7 @@ OP_COUNT = 0x11
 OP_STATS = 0x12
 OP_PING = 0x13
 OP_META = 0x14
-OP_KEYS = 0x15f
+OP_KEYS = 0x15
 OP_END = 0xFF
 
 
@@ -42,6 +42,7 @@ command_map = {
     b'dec': OP_DEC,
     b'lock': OP_LOCK,
     b'unlock': OP_UNLOCK,
+
     b'mset': OP_MSET,
     b'mttl': OP_MTTL,
     b'mget': OP_MGET,
@@ -51,6 +52,7 @@ command_map = {
     b'mlock': OP_MLOCK,
     b'munlock': OP_MUNLOCK,
     b'count': OP_COUNT,
+
     b'stats': OP_STATS,
     b'ping': OP_PING,
     b'meta': OP_META,

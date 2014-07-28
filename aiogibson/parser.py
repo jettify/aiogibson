@@ -67,41 +67,44 @@ class Reader(object):
         elif self._code == consts.REPL_ERR_LOCKED:
             return errors.KeyLockedError()
         elif self._code == consts.REPL_VAL:
-            return self._parse_values(self._payload, self._gb_encoding)
+            return self._parse_value(self._payload, self._gb_encoding)
         elif self._code == consts.REPL_KVAL:
             return self._parse_kv(self._payload)
         else:
             raise errors.ProtocolError()
 
     def _parse_kv(self, data):
-        entities_num = struct.unpack('I', data[:consts.REPL_SIZE])[0]
-        entities = [None]*entities_num*2
-        entities = self._parse_entity(entities, 0, data[consts.REPL_SIZE:])
-        return entities
+        pairs_num = struct.unpack('I', data[:consts.REPL_SIZE])[0]
+        result = []
+        offset = consts.REPL_SIZE
 
-    def _parse_entity(self, result, cursor, data, encoding=False):
-        if not data:
-            return result
-        offset = int(encoding)
-
-        entity_size = struct.unpack('I',
-                                    data[offset:consts.REPL_SIZE + offset])[0]
-        _start = consts.REPL_SIZE + offset
-        _end = consts.REPL_SIZE + offset + entity_size
-        entity = data[_start: _end]
-        _data = data[consts.REPL_SIZE + offset + entity_size:]
-        result[cursor] = bytes(entity)
-        result = self._parse_entity(result, cursor+1, _data, not encoding)
+        for i in range(pairs_num):
+            # unpack key size
+            key_size = struct.unpack('I', data[offset: offset + consts.REPL_SIZE])[0]
+            offset += consts.REPL_SIZE
+            # unpack key
+            key = bytes(data[offset: offset + key_size])
+            result.append(key)
+            offset += key_size
+            # unpack value encoding
+            value_gb_encodig = struct.unpack('B', data[offset: offset + 1])[0]
+            offset += 1
+            # unpack value size
+            value_size = struct.unpack('I', data[offset: offset + consts.REPL_SIZE])[0]
+            offset += consts.REPL_SIZE
+            # unpack value
+            value = self._parse_value(data[offset: offset + value_size], value_gb_encodig)
+            result.append(value)
+            offset += value_size
         return result
 
-    def _parse_values(self, data, encoding):
-        if encoding == consts.GB_ENC_PLAIN:
-            return [bytes(v) for v in data.split()]
-        elif encoding == consts.GB_ENC_NUMBER:
-            return struct.unpack('q', data)
+    def _parse_value(self, data, encoding):
+        if encoding == consts.GB_ENC_NUMBER:
+            return struct.unpack('q', data)[0]
+        elif encoding == consts.GB_ENC_PLAIN:
+            return bytes(data)
         else:
-            raise errors.ProtocolError
-
+            raise errors.ProtocolError()
     def _reset(self):
         self._payload = bytearray()
         self._is_header = False
