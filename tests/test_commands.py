@@ -121,3 +121,35 @@ class CommandsTest(GibsonTest):
         yield from self.gibson.set(key2, value2, 100)
         resp = yield from self.gibson.keys(b'test:keys')
         self.assertEqual(resp, [b'0', key1, b'1', key2])
+
+    @run_until_complete
+    def test_ping(self):
+        result = yield from self.gibson.ping()
+        self.assertTrue(result)
+
+    @run_until_complete
+    def test_meta(self):
+        key, value = b'test:meta_size', b'bar'
+        response = yield from self.gibson.set(key, value, expire=10)
+        self.assertEqual(response, value)
+
+        res = yield from self.gibson.meta_size(key)
+        self.assertEqual(res, 3)
+
+        res = yield from self.gibson.meta_encoding(key)
+        self.assertEqual(res, 0)
+
+        res = yield from self.gibson.meta_access(key)
+        self.assertTrue(1405555555 < res)
+
+        res = yield from self.gibson.meta_created(key)
+        self.assertTrue(1405555555 < res)
+
+        res = yield from self.gibson.meta_ttl(key)
+        self.assertEqual(res, 10)
+
+        res = yield from self.gibson.meta_left(key)
+        self.assertTrue(10 >= res)
+
+        res = yield from self.gibson.meta_lock(key)
+        self.assertEqual(res, 0)
