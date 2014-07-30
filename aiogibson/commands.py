@@ -17,6 +17,11 @@ class Gibson:
     def close(self):
         self._conn.close()
 
+    @property
+    def closed(self):
+        """True if connection is closed."""
+        return self._conn.closed
+
     @asyncio.coroutine
     def get(self, key):
         return (yield from self._conn.execute(b'get', key))
@@ -130,8 +135,9 @@ class Gibson:
 
 
 @asyncio.coroutine
-def create_gibson(address, *, commands_factory=Gibson, loop=None):
+def create_gibson(address, *, encoding=None, commands_factory=Gibson,
+                  loop=None):
     """Creates high-level Gibson interface.
     """
-    conn = yield from create_connection(address, loop=loop)
+    conn = yield from create_connection(address, encoding=encoding, loop=loop)
     return commands_factory(conn)

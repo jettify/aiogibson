@@ -10,11 +10,11 @@ from .commands import create_gibson, Gibson
 
 
 @asyncio.coroutine
-def create_pool(address, *, minsize=10, maxsize=10, commands_factory=Gibson,
-                loop=None):
+def create_pool(address, *, encoding=None, minsize=10, maxsize=10,
+                commands_factory=Gibson, loop=None):
     """XXX"""
 
-    pool = GibsonPool(address,
+    pool = GibsonPool(address, encoding=encoding,
                       minsize=minsize, maxsize=maxsize,
                       commands_factory=commands_factory,
                       loop=loop)
@@ -26,7 +26,7 @@ class GibsonPool:
     """Gibson connections pool.
     """
 
-    def __init__(self, address, db=0, password=None, encoding=None,
+    def __init__(self, address, encoding=None,
                  *, minsize, maxsize, commands_factory, loop=None):
         if loop is None:
             loop = asyncio.get_event_loop()
@@ -37,6 +37,7 @@ class GibsonPool:
         self._pool = asyncio.Queue(maxsize, loop=loop)
         self._used = set()
         self._need_wait = None
+        self._encoding = encoding
 
     @property
     def minsize(self):
@@ -77,24 +78,6 @@ class GibsonPool:
         """Current set codec or None."""
         return self._encoding
 
-    @asyncio.coroutine
-    def select(self, db):
-        """Changes db index for all free connections.
-        """
-        self._need_wait = fut = asyncio.Future(loop=self._loop)
-        try:
-            yield from self._fill_free()
-            for _ in range(self.freesize):
-                conn = yield from self._pool.get()
-                try:
-                    yield from conn.select(db)
-                    self._db = db
-                finally:
-                    yield from self._pool.put(conn)
-        finally:
-            self._need_wait = None
-            fut.set_result(None)
-
     def _wait_select(self):
         if self._need_wait is None:
             return ()
@@ -119,21 +102,14 @@ class GibsonPool:
 
     def release(self, conn):
         """Returns used connection back into pool.
-
-        When returned connection has db index that differs from one in pool
-        the connection will be dropped.
-        When queue of free connections is full the connection will be dropped.
         """
         assert conn in self._used, "Invalid connection, maybe from other pool"
         self._used.remove(conn)
         if not conn.closed:
-            if conn.db == self.db:
-                try:
-                    self._pool.put_nowait(conn)
-                except asyncio.QueueFull:
-                    # consider this connection as old and close it.
-                    conn.close()
-            else:
+            try:
+                self._pool.put_nowait(conn)
+            except asyncio.QueueFull:
+                # consider this connection as old and close it.
                 conn.close()
 
     @asyncio.coroutine
@@ -145,6 +121,7 @@ class GibsonPool:
     @asyncio.coroutine
     def _create_new_connection(self):
         conn = yield from create_gibson(self._address,
+                                        encoding=self._encoding,
                                         commands_factory=self._factory,
                                         loop=self._loop)
         return conn
