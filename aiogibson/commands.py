@@ -121,16 +121,21 @@ class Gibson:
 
     @asyncio.coroutine
     def mdec(self, prefix):
-        return (yield from self._conn.execute(b'dec', prefix))
+        return (yield from self._conn.execute(b'mdec', prefix))
 
     @asyncio.coroutine
     def mlock(self, prefix, expire=0):
-        result = yield from self._conn.execute(b'lock', prefix, expire)
+        result = yield from self._conn.execute(b'mlock', prefix, expire)
         return result
 
     @asyncio.coroutine
     def munlock(self, prefix):
-        result = yield from self._conn.execute(b'unlock', prefix)
+        result = yield from self._conn.execute(b'munlock', prefix)
+        return result
+
+    @asyncio.coroutine
+    def mdelete(self, prefix):
+        result = yield from self._conn.execute(b'mdel', prefix)
         return result
 
 
