@@ -36,7 +36,6 @@ class GibsonPool:
         self._loop = loop
         self._pool = asyncio.Queue(maxsize, loop=loop)
         self._used = set()
-        self._need_wait = None
         self._encoding = encoding
 
     @property
@@ -78,18 +77,12 @@ class GibsonPool:
         """Current set codec or None."""
         return self._encoding
 
-    def _wait_select(self):
-        if self._need_wait is None:
-            return ()
-        return self._need_wait
-
     @asyncio.coroutine
     def acquire(self):
         """Acquires a connection from free pool.
 
         Creates new connection if needed.
         """
-        yield from self._wait_select()
         yield from self._fill_free()
         if self.minsize > 0 or not self._pool.empty():
             conn = yield from self._pool.get()
