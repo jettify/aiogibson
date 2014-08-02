@@ -6,7 +6,10 @@ __all__ = ['create_gibson', 'Gibson']
 
 
 class Gibson:
-    """XXX"""
+    """High-level Gibson interface
+
+    :see: http://gibson-db.in/commands/
+    """
 
     def __init__(self, connection):
         self._conn = connection
@@ -24,26 +27,60 @@ class Gibson:
 
     @asyncio.coroutine
     def get(self, key):
+        """Get the value for a given key.
+
+        :param key: ``bytes``  key to get.
+        :return: ``bytes`` if value exists else ``None``
+        """
         return (yield from self._conn.execute(b'get', key))
 
     @asyncio.coroutine
     def set(self, key, value, expire=0):
+        """Set the value for the given key, with an optional TTL.
+
+        :param key: ``bytes`` key to set.
+        :param value: ``bytes`` value to set.
+        :param expire: ``int``  optional ttl in seconds
+        """
         return (yield from self._conn.execute(b'set', expire, key, value))
 
     @asyncio.coroutine
     def delete(self, key):
-        return (yield from self._conn.execute(b'del', key))
+        """ Delete the given key.
+
+        :param key: ``bytes`` key to delete.
+        :return: ``bool`` true in case of success.
+        """
+        result = (yield from self._conn.execute(b'del', key))
+        return  bool(result)
 
     @asyncio.coroutine
     def ttl(self, key, expire):
+        """Set the TTL of a key.
+
+
+        :param key: ``bytes``, key to set ttl.
+        :param expire: ``int``, TTL in seconds.
+        :return: ``bool``, True in case of success.
+        """
         return (yield from self._conn.execute(b'ttl', key, expire))
 
     @asyncio.coroutine
     def inc(self, key):
+        """Increment by one the given key.
+
+        :param key: ``bytes``, key to increment.
+        :return: ``int`` incremented value
+        """
         return (yield from self._conn.execute(b'inc', key))
 
     @asyncio.coroutine
     def dec(self, key):
+        """Decrement by one the given key.
+
+        :param key: ``bytes``, key to decrement.
+        :return: ``int`` decremented value in case of success
+        """
         return (yield from self._conn.execute(b'dec', key))
 
     @asyncio.coroutine
@@ -142,7 +179,7 @@ class Gibson:
     def count(self, prefix):
         """Count items for a given prefix.
 
-        :param prefix:
+        :param prefix: ``bytes`` The key prefix to use as expression
         :return: ``int`` number of elements
         """
         return (yield from self._conn.execute(b'count', prefix))

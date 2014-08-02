@@ -29,6 +29,10 @@ class CommandsTest(GibsonTest):
         self.assertEqual(resp, value)
         resp = yield from self.gibson.delete(key)
         self.assertEqual(resp, True)
+
+        resp = yield from self.gibson.delete(key)
+        self.assertEqual(resp, None)
+
         resp = yield from self.gibson.get(key)
         self.assertEqual(resp, None)
 
@@ -92,7 +96,7 @@ class CommandsTest(GibsonTest):
 
     @run_until_complete
     def test_stats(self):
-        key, value = b'test:ttl', b'zap'
+        key, value = b'test:stats', b'zap'
         resp = yield from self.gibson.set(key, value, 3)
         self.assertEqual(resp, value)
 
