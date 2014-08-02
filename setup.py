@@ -48,7 +48,7 @@ classifiers = [
     'Topic :: Software Development :: Libraries',
 ]
 
-setup(name='aioredis',
+setup(name='aiogibson',
       version=read_version(),
       description=("asyncio (PEP 3156) Gibson support"),
       long_description="\n\n".join((read('README.rst'), read('CHANGES.txt'))),
