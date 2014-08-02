@@ -3,8 +3,9 @@ from aiogibson import errors
 
 
 class CommandsTest(GibsonTest):
-    """
+    """Gibson high level commands.
 
+    :see: http://gibson-db.in/commands/
     """
 
     @run_until_complete
@@ -225,4 +226,13 @@ class CommandsTest(GibsonTest):
             yield from self.gibson.delete(key1)
         yield from self.gibson.munlock(b'test:mlock')
         res = yield from self.gibson.mdelete(b'test:mlock')
+        self.assertEqual(res, 2)
+
+    @run_until_complete
+    def test_count(self):
+        key1, value1 = b'test:count:1', 10
+        key2, value2 = b'test:count:2', 20
+        yield from self.gibson.set(key1, value1, 3)
+        yield from self.gibson.set(key2, value2, 3)
+        res = yield from self.gibson.count(b'test:count')
         self.assertEqual(res, 2)

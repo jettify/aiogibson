@@ -138,6 +138,15 @@ class Gibson:
         result = yield from self._conn.execute(b'mdel', prefix)
         return result
 
+    @asyncio.coroutine
+    def count(self, prefix):
+        """Count items for a given prefix.
+
+        :param prefix:
+        :return: ``int`` number of elements
+        """
+        return (yield from self._conn.execute(b'count', prefix))
+
 
 @asyncio.coroutine
 def create_gibson(address, *, encoding=None, commands_factory=Gibson,
