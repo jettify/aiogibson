@@ -52,18 +52,18 @@ class Gibson:
         :return: ``bool`` true in case of success.
         """
         result = (yield from self._conn.execute(b'del', key))
-        return  bool(result)
+        return bool(result)
 
     @asyncio.coroutine
     def ttl(self, key, expire):
         """Set the TTL of a key.
 
-
         :param key: ``bytes``, key to set ttl.
         :param expire: ``int``, TTL in seconds.
         :return: ``bool``, True in case of success.
         """
-        return (yield from self._conn.execute(b'ttl', key, expire))
+        result = yield from self._conn.execute(b'ttl', key, expire)
+        return bool(result)
 
     @asyncio.coroutine
     def inc(self, key):
