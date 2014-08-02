@@ -31,7 +31,7 @@ class CommandsTest(GibsonTest):
         self.assertEqual(resp, True)
 
         resp = yield from self.gibson.delete(key)
-        self.assertEqual(resp, None)
+        self.assertEqual(resp, False)
 
         resp = yield from self.gibson.get(key)
         self.assertEqual(resp, None)
