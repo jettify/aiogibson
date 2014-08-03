@@ -125,7 +125,7 @@ class CommandsTest(GibsonTest):
         yield from self.gibson.set(key1, value1, 3)
         yield from self.gibson.set(key2, value2, 3)
         resp = yield from self.gibson.keys(b'test:keys')
-        self.assertEqual(resp, [b'0', key1, b'1', key2])
+        self.assertEqual(resp, [key1, key2])
 
     @run_until_complete
     def test_ping(self):
