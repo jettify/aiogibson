@@ -164,18 +164,39 @@ class Gibson:
 
     @asyncio.coroutine
     def mget(self, prefix):
+        """Set the value for keys verifying the given prefix.
+
+        :param prefix: prefix for keys.
+        :return: ``int``, number of modified items, otherwise an error.
+        """
         return (yield from self._conn.execute(b'mget', prefix))
 
     @asyncio.coroutine
     def mttl(self, prefix, expire):
+        """Set the TTL for keys verifying the given prefix.
+
+        :param prefix: prefix for keys.
+        :param expire: ``int``, new expiration time.
+        :return:``int``, number of modified items, otherwise an error.
+        """
         return (yield from self._conn.execute(b'mttl', prefix, expire))
 
     @asyncio.coroutine
     def minc(self, prefix):
+        """Increment by one keys verifying the given prefix.
+
+        :param prefix: prefix for keys.
+        :return:``int``, number of modified items, otherwise an error.
+        """
         return (yield from self._conn.execute(b'minc', prefix))
 
     @asyncio.coroutine
     def mdec(self, prefix):
+        """Decrement by one keys verifying the given prefix.
+
+        :param prefix: prefix for keys.
+        :return:``int``, number of modified items, otherwise an error.
+        """
         return (yield from self._conn.execute(b'mdec', prefix))
 
     @asyncio.coroutine
