@@ -7,7 +7,9 @@ __all__ = ['encode_command', 'Reader']
 
 
 class Reader(object):
-    """XXX"""
+    """This class is responsible for parsing replies from the stream
+    of data that is read from a *Gibson* connection. It does not contain
+    functionality to handle I/O"""
 
     def __init__(self):
         self._buffer = bytearray()
@@ -19,19 +21,20 @@ class Reader(object):
         self._code = None
 
     def feed_data(self, data):
-        """
-        XXX
-        :param data:
-        :return:
+        """Put raw chunk of data obtained from connection to buffer.
+
+        :param data: ``bytes``, raw input data.
         """
         if not data:
             return
         self._buffer.extend(data)
 
     def gets(self):
-        """
-        XXX
-        :return:
+        """When the buffer does not contain a full reply, gets returns
+        False. This means extra data is needed and feed should be called
+        again before calling gets again:
+
+        :return: ``False`` there is no full reply or parsed obj.
         """
         if not self._is_header and len(self._buffer) >= consts.HEADER_SIZE:
             reply = self._buffer[:consts.HEADER_SIZE]
@@ -74,6 +77,7 @@ class Reader(object):
             raise errors.ProtocolError()
 
     def _parse_kv(self, data):
+        # parse key/value replay from Gibson server
         pairs_num = struct.unpack('I', data[:consts.REPL_SIZE])[0]
         result = []
         offset = consts.REPL_SIZE
@@ -102,6 +106,8 @@ class Reader(object):
         return result
 
     def _parse_value(self, data, encoding):
+        # parse simple value replay from Gibson server.
+        # apply gibson encoding if needed
         if encoding == consts.GB_ENC_NUMBER:
             return struct.unpack('q', data)[0]
         elif encoding == consts.GB_ENC_PLAIN:
@@ -110,6 +116,8 @@ class Reader(object):
             raise errors.ProtocolError()
 
     def _reset(self):
+        # replay parsed, buffer should be prepared for next server
+        # reply
         self._payload = bytearray()
         self._is_header = False
         self._is_payload = False
@@ -128,11 +136,13 @@ _converters = {
 
 
 def encode_command(command, *args):
-    """
-    XXX
-    :param command:
-    :param args:
-    :return:
+    """Pack and encode *gibson* command acording to gibson binary protocol
+
+    :see: http://gibson-db.in/protocol/
+
+    :param command: ``byte``, gibson command (get, set, etc.)
+    :param args: required arguments for given command.
+    :return: ``bytes`` packed and encoded command.
     """
     _args = []
     for arg in args:

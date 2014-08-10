@@ -12,7 +12,14 @@ from .commands import create_gibson, Gibson
 @asyncio.coroutine
 def create_pool(address, *, encoding=None, minsize=10, maxsize=10,
                 commands_factory=Gibson, loop=None):
-    """XXX"""
+    """Creates Gibson Pool.
+
+    By default it creates pool of commands_factory instances, but it is
+    also possible to create pool of plain connections by passing
+    ``lambda conn: conn`` as commands_factory.
+    All arguments are the same as for create_connection.
+    Returns GibsonPool instance.
+    """
 
     pool = GibsonPool(address, encoding=encoding,
                       minsize=minsize, maxsize=maxsize,

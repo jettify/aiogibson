@@ -1,19 +1,19 @@
+
 import asyncio
-import aiogibson
+from aiogibson import create_gibson
 
 loop = asyncio.get_event_loop()
 
 
 @asyncio.coroutine
 def go():
-    conn = yield from aiogibson.create_connection(
-        ('localhost', 10128), loop=loop)
-    # result1 = yield from conn.execute(b'set', b'3600', b'foo1', b'bar1')
-    # result2 = yield from conn.execute(b'mget', b'fo')
-
-    # print(result1, result2)
-    result3 = yield from conn.execute(b'set', b'asdf', b'ad')
-    print(result3)
-
+    gibson = yield from create_gibson('/tmp/aio.sock', loop=loop)
+    # set value
+    yield from gibson.set(b'foo', b'bar', 7)
+    # get value
+    result = yield from gibson.get(b'foo')
+    print(result)
+    # delete value
+    yield from gibson.delete(b'foo')
 
 loop.run_until_complete(go())

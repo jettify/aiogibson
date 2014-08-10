@@ -19,6 +19,12 @@ _NOTSET = object()
 @asyncio.coroutine
 def create_connection(address, *, encoding=None, loop=None):
     """Creates GibsonConnection connection.
+    Opens connection to Gibson server specified by address argument.
+
+    :param address: ``str`` for unix socket path, or ``tuple``
+        for (host, port) tcp connection.
+    :param encoding: this argument can be used to decode byte-replies to
+    strings. By default no decoding is done.
     """
     assert isinstance(address, (tuple, list, str)), "tuple or str expected"
 

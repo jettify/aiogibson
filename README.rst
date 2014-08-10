@@ -23,7 +23,7 @@ Example
 
     @asyncio.coroutine
     def go():
-        gibson = yield from create_gibson('/tmp/aio.sock', loop=self.loop))
+        gibson = yield from create_gibson('/tmp/aio.sock', loop=loop)
         # set value
         yield from gibson.set(b'foo', b'bar', 7)
         # get value
