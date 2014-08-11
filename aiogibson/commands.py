@@ -201,16 +201,33 @@ class Gibson:
 
     @asyncio.coroutine
     def mlock(self, prefix, expire=0):
+        """Prevent keys verifying the given prefix from being modified
+        for a given amount of seconds.
+
+        :param prefix: ``bytes``, prefix for keys.
+        :param expire:``int``, lock period in seconds.
+        :return:``int``, number of modified items, otherwise an error.
+        """
         result = yield from self._conn.execute(b'mlock', prefix, expire)
         return result
 
     @asyncio.coroutine
     def munlock(self, prefix):
+        """Remove the lock on keys verifying the given prefix.
+
+        :param prefix: prefix for keys.
+        :return:``int``, number of affected items, otherwise an error.
+        """
         result = yield from self._conn.execute(b'munlock', prefix)
         return result
 
     @asyncio.coroutine
     def mdelete(self, prefix):
+        """Delete keys verifying the given prefix.
+
+        :param prefix: prefix for keys.
+        :return:``int``, number of modified items, otherwise an error.
+        """
         result = yield from self._conn.execute(b'mdel', prefix)
         return result
 
