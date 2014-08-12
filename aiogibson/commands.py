@@ -125,36 +125,71 @@ class Gibson:
     def ping(self):
         return (yield from self._conn.execute(b'ping'))
 
+    @asyncio.coroutine
     def meta_size(self, key):
-        # size: The size in bytes of the item value.
+        """The size in bytes of the item value.
+
+        :param key: ``bytes``, key of interest.
+        :return: ``int``, value size in bytes
+        """
         return (yield from self._conn.execute(b'meta', key, b'size'))
 
+    @asyncio.coroutine
     def meta_encoding(self, key):
-        # encoding: The value encoding.
+        """Gibson encoding for given value.
+
+        :param key: ``bytes``, key of interest.
+        :return: ``int``, gibson encoding, 0 - ``bytes``, 2 - ``int``.
+        """
         return (yield from self._conn.execute(b'meta', key, b'encoding'))
 
+    @asyncio.coroutine
     def meta_access(self, key):
-        # access: Timestamp of the last time the item was accessed.
+        """Timestamp of the last time the item was accessed.
+
+        :param key: ``bytes``, key of interest.
+        :return: ``int``, timestamp
+        """
         return (yield from self._conn.execute(b'meta', key, b'access'))
 
+    @asyncio.coroutine
     def meta_created(self, key):
-        # created: Timestamp of item creation.
+        """Timestamp of item creation.
+
+        :param key: ``bytes``, key of interest.
+        :return: ``int``, timestamp
+        """
         return (yield from self._conn.execute(b'meta', key, b'created'))
 
+    @asyncio.coroutine
     def meta_ttl(self, key):
-        # ttl: Item specified time to live, -1 for infinite TTL.
+        """Item specified time to live, -1 for infinite TTL.
 
+        :param key: ``bytes``, key of interest.
+        :return: ``int``, seconds of TTL.
+        """
         return (yield from self._conn.execute(b'meta', key,  b'ttl'))
 
+    @asyncio.coroutine
     def meta_left(self, key):
-        # left: Number of seconds left for the item to live if a ttl
-        #  was specified, otherwise -1.
+        """Number of seconds left for the item to live if a ttl
+        was specified, otherwise -1.
+
+        :param key: ``bytes``, key of interest.
+        :return: ``int``, Number of seconds left.
+        """
         return (yield from self._conn.execute(b'meta', key, b'left'))
 
+    @asyncio.coroutine
     def meta_lock(self, key):
-        # lock: Number of seconds the item is locked, -1 if there's no lock.
+        """Number of seconds the item is locked, -1 if there's no lock.
+
+        :param key: ``bytes``, key of interest.
+        :return: ``int``, number of seconds
+        """
         return (yield from self._conn.execute(b'meta', key, b'lock'))
 
+    @asyncio.coroutine
     def end(self):
         return (yield from self._conn.execute(b'end'))
 
