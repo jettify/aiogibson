@@ -6,6 +6,15 @@
 Welcome to aiogibson's documentation!
 =====================================
 
+**aiogibson** is a library for accessing a gibson_ cache database
+from the asyncio_ (PEP-3156/tulip) framework.
+
+Code heavily reused from awesome aioredis_ library. ``GibsonPool``,
+``GibsonConnection``, almost direct copy of ``RedisPool`` and
+``RedisConnection``, so I highly recommend to checkout aioredis_.
+
+
+
 Contents:
 
 .. toctree::
