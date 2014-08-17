@@ -50,7 +50,7 @@ classifiers = [
 
 setup(name='aiogibson',
       version=read_version(),
-      description=("asyncio (PEP 3156) Gibson support"),
+      description=("asyncio (PEP 3156) Gibson cache support"),
       long_description="\n\n".join((read('README.rst'), read('CHANGES.txt'))),
       classifiers=classifiers,
       platforms=["POSIX"],
