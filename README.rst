@@ -5,10 +5,10 @@ aiogibson
    :target: https://travis-ci.org/jettify/aiogibson
    :alt: Build status
 .. image:: https://pypip.in/v/aiogibson/badge.png
-   :target: https://crate.io/packages/aiogibson/
+   :target: https://pypi.python.org/pypi/aiogibson/
    :alt: Latest PyPI version
 .. image:: https://pypip.in/d/aiogibson/badge.png
-   :target: https://crate.io/packages/aiogibson/
+   :target: https://pypi.python.org/pypi/aiogibson/
    :alt: Number of PyPI downloads
 
 
