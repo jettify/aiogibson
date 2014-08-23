@@ -16,6 +16,14 @@ aiogibson
 **aiogibson** is a library for accessing a gibson_ cache database
 from the asyncio_ (PEP-3156/tulip) framework.
 
+Gibson is a high efficiency, tree based memory cache server.
+It uses a special trie_ structure allowing the
+user to perform operations on multiple key sets using a prefix
+expression achieving the same performance grades in the worst case,
+even better on an average case then regular cache implementations
+based on hash tables.
+
+
 Code heavily reused from awesome aioredis_ library. ``GibsonPool``,
 ``GibsonConnection``, almost direct copy of ``RedisPool`` and
 ``RedisConnection``, so I highly recommend to checkout aioredis_.
@@ -73,12 +81,6 @@ Requirements
 * asyncio_ or Python_ 3.4+
 
 
-Other Python client
--------------------
-
-* https://github.com/bak1an/pygibson
-
-
 License
 -------
 
@@ -88,3 +90,4 @@ The *aiogibson* is offered under MIT license.
 .. _asyncio: http://docs.python.org/3.4/library/asyncio.html
 .. _gibson: http://gibson-db.in/
 .. _aioredis: https://github.com/aio-libs/aioredis
+.. _trie: http://en.wikipedia.org/wiki/Trie
