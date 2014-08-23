@@ -1,7 +1,17 @@
 aiogibson
 =========
+
 .. image:: https://travis-ci.org/jettify/aiogibson.svg?branch=master
    :target: https://travis-ci.org/jettify/aiogibson
+   :alt: Build status
+.. image:: https://pypip.in/v/aiogibson/badge.png
+   :target: https://pypi.python.org/pypi/aiogibson/
+   :alt: Latest PyPI version
+.. image:: https://pypip.in/d/aiogibson/badge.png
+   :target: https://pypi.python.org/pypi/aiogibson/
+   :alt: Number of PyPI downloads
+
+
 
 **aiogibson** is a library for accessing a gibson_ cache database
 from the asyncio_ (PEP-3156/tulip) framework.
