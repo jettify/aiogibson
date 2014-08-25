@@ -38,15 +38,16 @@ class Reader(object):
         """
         if not self._is_header and len(self._buffer) >= consts.HEADER_SIZE:
             reply = self._buffer[:consts.HEADER_SIZE]
-            self._buffer = self._buffer[consts.HEADER_SIZE:]
             unpacked = struct.unpack(b'<HBI', reply)
             self._code, self._gb_encoding, self._resp_size = unpacked
             self._is_header = True
 
         if (self._is_header and not self._is_payload and
-                (len(self._buffer) >= self._resp_size)):
-            data = self._buffer[:self._resp_size]
-            self._buffer = self._buffer[self._resp_size:]
+                (len(self._buffer) >= self._resp_size + consts.HEADER_SIZE)):
+
+            start = consts.HEADER_SIZE
+            end = consts.HEADER_SIZE + self._resp_size
+            data = self._buffer[start:end]
             self._payload.extend(data)
             self._is_payload = True
 
@@ -118,6 +119,7 @@ class Reader(object):
     def _reset(self):
         # replay parsed, buffer should be prepared for next server
         # reply
+        self._buffer = self._buffer[consts.HEADER_SIZE + self._resp_size:]
         self._payload = bytearray()
         self._is_header = False
         self._is_payload = False
