@@ -37,4 +37,4 @@ class MemoryLimitError(GibsonError):
 
 
 class KeyLockedError(GibsonError):
-    """The specified key was locked by a OP_LOCK or a OP_MLOCK query."""
+    """The specified key was locked by a `OP_LOCK` or a `OP_MLOCK` query."""

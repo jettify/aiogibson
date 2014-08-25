@@ -8,6 +8,8 @@ import asyncio
 
 from .commands import create_gibson, Gibson
 
+__all__ = ['create_pool', 'GibsonPool']
+
 
 @asyncio.coroutine
 def create_pool(address, *, encoding=None, minsize=10, maxsize=10,

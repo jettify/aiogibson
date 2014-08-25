@@ -142,16 +142,14 @@ def encode_command(command, *args):
 
     :see: http://gibson-db.in/protocol/
 
-    :param command: ``byte``, gibson command (get, set, etc.)
+    :param command: ``bytes``, gibson command (get, set, etc.)
     :param args: required arguments for given command.
     :return: ``bytes`` packed and encoded command.
     """
     _args = []
     for arg in args:
-
         if type(arg) in _converters:
-            barg = _converters[type(arg)](arg)
-            _args.append(barg)
+            _args.append(_converters[type(arg)](arg))
         else:
             raise TypeError("Argument {!r} expected to be of bytes,"
                             " str, int or float type".format(arg))
