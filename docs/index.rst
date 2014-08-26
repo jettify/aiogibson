@@ -9,10 +9,63 @@ Welcome to aiogibson's documentation!
 **aiogibson** is a library for accessing a gibson_ cache database
 from the asyncio_ (PEP-3156/tulip) framework.
 
+Gibson is a high efficiency, tree based memory cache server.
+It uses a special trie_ structure allowing the
+user to perform operations on multiple key sets using a prefix
+expression achieving the same performance grades in the worst case,
+even better on an average case then regular cache implementations
+based on hash tables.
+
+
 Code heavily reused from awesome aioredis_ library. ``GibsonPool``,
 ``GibsonConnection``, almost direct copy of ``RedisPool`` and
 ``RedisConnection``, so I highly recommend to checkout aioredis_.
 
+Example
+-------
+
+.. code:: python
+
+    import asyncio
+    from aiogibson import create_gibson
+
+    loop = asyncio.get_event_loop()
+
+
+    @asyncio.coroutine
+    def go():
+        gibson = yield from create_gibson('/tmp/aio.sock', loop=loop)
+        # set value
+        yield from gibson.set(b'foo', b'bar', 7)
+        yield from gibson.set(b'numfoo', 100, 7)
+
+        # get value
+        result = yield from gibson.get(b'foo')
+        print(result)
+
+        # set ttl to the value
+        yield from gibson.ttl(b'foo', 10)
+
+        # increment given key
+        yield from gibson.inc(b'numfoo')
+
+        # decrement given key
+        yield from gibson.dec(b'numfoo')
+
+        # lock key from modification
+        yield from gibson.lock(b'numfoo')
+
+        # unlock given key
+        yield from gibson.unlock(b'numfoo')
+
+        # fetch keys with given prefix
+        yield from gibson.keys(b'foo')
+
+        # delete value
+        yield from gibson.delete(b'foo')
+
+
+    loop.run_until_complete(go())
 
 
 Contents:
@@ -58,3 +111,8 @@ Indices and tables
 * :ref:`search`
 
 .. _MIT license: https://github.com/jettify/aiogibson/blob/master/LICENSE
+.. _Python: https://www.python.org
+.. _asyncio: http://docs.python.org/3.4/library/asyncio.html
+.. _gibson: http://gibson-db.in/
+.. _aioredis: https://github.com/aio-libs/aioredis
+.. _trie: http://en.wikipedia.org/wiki/Trie

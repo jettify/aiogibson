@@ -1,0 +1,7 @@
+Sphinx
+ipdb
+ipython
+coverage
+pep8
+pyflakes
+sphinx-readable-theme==1.1.0

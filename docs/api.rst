@@ -4,7 +4,7 @@
 
 High Level Commands
 ===================
-.. automodule:: aiogibson.parser
+.. automodule:: aiogibson.commands
    :members:
 
 
