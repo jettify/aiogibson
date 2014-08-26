@@ -195,14 +195,19 @@ class Gibson:
 
     @asyncio.coroutine
     def mset(self, prefix, value):
-        return (yield from self._conn.execute(b'mset', prefix, value))
-
-    @asyncio.coroutine
-    def mget(self, prefix):
         """Set the value for keys verifying the given prefix.
 
         :param prefix: prefix for keys.
         :return: ``int``, number of modified items, otherwise an error.
+        """
+        return (yield from self._conn.execute(b'mset', prefix, value))
+
+    @asyncio.coroutine
+    def mget(self, prefix):
+        """Get the values for keys with given prefix.
+
+        :param prefix: prefix for keys.
+        :return: ``list`` of key/value pairs
         """
         return (yield from self._conn.execute(b'mget', prefix))
 
@@ -212,7 +217,7 @@ class Gibson:
 
         :param prefix: prefix for keys.
         :param expire: ``int``, new expiration time.
-        :return:``int``, number of modified items, otherwise an error.
+        :return: ``int``, number of modified items, otherwise an error.
         """
         return (yield from self._conn.execute(b'mttl', prefix, expire))
 
@@ -221,7 +226,7 @@ class Gibson:
         """Increment by one keys verifying the given prefix.
 
         :param prefix: prefix for keys.
-        :return:``int``, number of modified items, otherwise an error.
+        :return: ``int``, number of modified items, otherwise an error.
         """
         return (yield from self._conn.execute(b'minc', prefix))
 
@@ -230,7 +235,7 @@ class Gibson:
         """Decrement by one keys verifying the given prefix.
 
         :param prefix: prefix for keys.
-        :return:``int``, number of modified items, otherwise an error.
+        :return: ``int``, number of modified items, otherwise an error.
         """
         return (yield from self._conn.execute(b'mdec', prefix))
 
@@ -241,7 +246,7 @@ class Gibson:
 
         :param prefix: ``bytes``, prefix for keys.
         :param expire:``int``, lock period in seconds.
-        :return:``int``, number of modified items, otherwise an error.
+        :return: ``int``, number of modified items, otherwise an error.
         """
         result = yield from self._conn.execute(b'mlock', prefix, expire)
         return result
@@ -251,7 +256,7 @@ class Gibson:
         """Remove the lock on keys verifying the given prefix.
 
         :param prefix: prefix for keys.
-        :return:``int``, number of affected items, otherwise an error.
+        :return: ``int``, number of affected items, otherwise an error.
         """
         result = yield from self._conn.execute(b'munlock', prefix)
         return result
@@ -261,7 +266,7 @@ class Gibson:
         """Delete keys verifying the given prefix.
 
         :param prefix: prefix for keys.
-        :return:``int``, number of modified items, otherwise an error.
+        :return: ``int``, number of modified items, otherwise an error.
         """
         result = yield from self._conn.execute(b'mdel', prefix)
         return result
