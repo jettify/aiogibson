@@ -118,11 +118,19 @@ class Gibson:
 
     @asyncio.coroutine
     def stats(self):
+        """Get system stats about the Gibson instance.
+
+        :return: ``list`` of pairs (stat, value).
+        """
         result = yield from self._conn.execute(b'stats')
         return result
 
     @asyncio.coroutine
     def ping(self):
+        """Ping the server instance to refresh client last seen timestamp.
+
+        :return: ``True`` or error.
+        """
         return (yield from self._conn.execute(b'ping'))
 
     @asyncio.coroutine
@@ -191,6 +199,7 @@ class Gibson:
 
     @asyncio.coroutine
     def end(self):
+        """Disconnects from the client from gibson instance."""
         return (yield from self._conn.execute(b'end'))
 
     @asyncio.coroutine
