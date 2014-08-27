@@ -2,17 +2,10 @@
 =================================
 
 
-High Level Commands
-===================
-.. automodule:: aiogibson.commands
-   :members:
-
-
 Connection Object
 =================
 .. automodule:: aiogibson.connection
    :members:
-
 
 Connection Pool
 ===============
@@ -22,4 +15,9 @@ Connection Pool
 Protocol Parser
 ===============
 .. automodule:: aiogibson.parser
+   :members:
+
+High Level Commands
+===================
+.. automodule:: aiogibson.commands
    :members:
