@@ -88,8 +88,25 @@ class GibsonConnection:
 
     @asyncio.coroutine
     def execute(self, command, *args, encoding=_NOTSET):
+        """Executes raw gibson command.
+
+        :param command: ``str`` or ``bytes`` gibson command.
+        :param args: tuple of arguments required for gibson command.
+        :param encoding: ``str`` default encoding for unpacked data.
+
+        :raises TypeError: if any of args can not be encoded as bytes.
+        :raises ProtocolError: when response can not be decoded meaning
+            connection is broken.
+        """
+
         assert self._reader and not self._reader.at_eof(), (
             "Connection closed or corrupted")
+
+        if command is None:
+            raise TypeError("command must not be None")
+        if None in set(args):
+            raise TypeError("args must not contain None")
+
         command = command.strip()
         data = encode_command(command, *args)
         self._writer.write(data)
