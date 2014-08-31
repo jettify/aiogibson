@@ -16,34 +16,6 @@ version >= 3.3.
 **aiogibson** has straightforward api, just like *memcached*:
 
 
-Simple Example
---------------
-
-.. code:: python
-
-    import asyncio
-    from aiogibson import create_gibson
-
-    loop = asyncio.get_event_loop()
-
-
-    @asyncio.coroutine
-    def go():
-        # create gibson connection
-        gibson = yield from create_gibson('/tmp/aiogibson.sock', loop=loop)
-        # set value with key ``foo``, value ``bar`` with ``ttl`` 7 seconds
-        yield from gibson.set(b'foo', b'bar', 7)
-        # get previously set value:
-        result = yield from gibson.get(b'foo')
-        # delete previously set value
-        yield from gibson.delete(b'foo')
-
-    loop.run_until_complete(go())
-
-
-
-
-
 Long Example
 ------------
 
@@ -94,6 +66,35 @@ Long Example
         info = yield from gibson.stats()
 
 
+
+
+
     loop.run_until_complete(go())
+
+
+Connection Pool Example
+-----------------------
+
+    .. code:: python
+
+    import asyncio
+    from aiogibson import create_pool
+
+    loop = asyncio.get_event_loop()
+
+    @asyncio.coroutine
+    def go():
+        pool = yield from create_pool('/tmp/aio.sock', minsize=5, maxsize=10,
+                                      loop=loop)
+
+        with (yield from pool) as gibson:
+            yield from gibson.set('foo', 'bar')
+            value = yield from gibson.get('foo')
+            print(value)
+
+        pool.clear()
+
+    loop.run_until_complete(go())
+
 
 .. _documentation: http://gibson-db.in/download/
