@@ -13,6 +13,8 @@ class CommandsTest(GibsonTest):
         key, value = b'test:set', b'bar'
         response = yield from self.gibson.set(key, value, expire=3)
         self.assertEqual(response, value)
+        with self.assertRaises(TypeError):
+            yield from self.gibson.set(key, value, expire='one')
 
     @run_until_complete
     def test_get(self):
@@ -44,6 +46,8 @@ class CommandsTest(GibsonTest):
 
         resp = yield from self.gibson.ttl(key, 10)
         self.assertEqual(resp, True)
+        with self.assertRaises(TypeError):
+            yield from self.gibson.ttl(key, expire='one')
 
     @run_until_complete
     def test_inc(self):
@@ -78,6 +82,9 @@ class CommandsTest(GibsonTest):
         with self.assertRaises(errors.KeyLockedError):
             yield from self.gibson.set(key, value, 3)
         yield from self.gibson.unlock(key)
+
+        with self.assertRaises(TypeError):
+            yield from self.gibson.lock(key, expire='one')
 
     def test_unlock(self):
         key, value = b'test:unlock', b'zap'
@@ -184,6 +191,8 @@ class CommandsTest(GibsonTest):
         yield from self.gibson.set(key2, value2, 3)
         resp = yield from self.gibson.mttl(b'test:mttl', 10)
         self.assertEqual(resp, 2)
+        with self.assertRaises(TypeError):
+            yield from self.gibson.mttl(key1, expire='one')
 
     @run_until_complete
     def test_minc(self):
@@ -231,6 +240,8 @@ class CommandsTest(GibsonTest):
         yield from self.gibson.munlock(b'test:mlock')
         res = yield from self.gibson.mdelete(b'test:mlock')
         self.assertEqual(res, 2)
+        with self.assertRaises(TypeError):
+            yield from self.gibson.mlock(key1, expire='one')
 
     @run_until_complete
     def test_count(self):

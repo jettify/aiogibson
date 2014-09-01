@@ -42,6 +42,8 @@ class Gibson:
         :param value: ``bytes`` value to set.
         :param expire: ``int``  optional ttl in seconds
         """
+        if not isinstance(expire, int):
+            raise TypeError('expire must be int')
         return (yield from self._conn.execute(b'set', expire, key, value))
 
     @asyncio.coroutine
@@ -62,6 +64,8 @@ class Gibson:
         :param expire: ``int``, TTL in seconds.
         :return: ``bool``, True in case of success.
         """
+        if not isinstance(expire, int):
+            raise TypeError('expire must be int')
         result = yield from self._conn.execute(b'ttl', key, expire)
         return bool(result)
 
@@ -92,6 +96,8 @@ class Gibson:
         :param expire: ``int``, time in seconds to lock the item.
         :return: ``bool``
         """
+        if not isinstance(expire, int):
+            raise TypeError('expire must be int')
         result = yield from self._conn.execute(b'lock', key, expire)
         return bool(result)
 
@@ -221,13 +227,15 @@ class Gibson:
         return (yield from self._conn.execute(b'mget', prefix))
 
     @asyncio.coroutine
-    def mttl(self, prefix, expire):
+    def mttl(self, prefix, expire=0):
         """Set the TTL for keys verifying the given prefix.
 
         :param prefix: prefix for keys.
         :param expire: ``int``, new expiration time.
         :return: ``int``, number of modified items, otherwise an error.
         """
+        if not isinstance(expire, int):
+            raise TypeError('expire must be int')
         return (yield from self._conn.execute(b'mttl', prefix, expire))
 
     @asyncio.coroutine
@@ -257,6 +265,8 @@ class Gibson:
         :param expire:``int``, lock period in seconds.
         :return: ``int``, number of modified items, otherwise an error.
         """
+        if not isinstance(expire, int):
+            raise TypeError('expire must be int')
         result = yield from self._conn.execute(b'mlock', prefix, expire)
         return result
 
