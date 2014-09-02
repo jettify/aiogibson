@@ -41,6 +41,7 @@ class Gibson:
         :param key: ``bytes`` key to set.
         :param value: ``bytes`` value to set.
         :param expire: ``int``  optional ttl in seconds
+        :raises TypeError: if expire argument is not ``int``
         """
         if not isinstance(expire, int):
             raise TypeError('expire must be int')
@@ -63,6 +64,7 @@ class Gibson:
         :param key: ``bytes``, key to set ttl.
         :param expire: ``int``, TTL in seconds.
         :return: ``bool``, True in case of success.
+        :raises TypeError: if expire argument is not ``int``
         """
         if not isinstance(expire, int):
             raise TypeError('expire must be int')
@@ -95,6 +97,7 @@ class Gibson:
         :param key: ``bytes``, key to decrement.
         :param expire: ``int``, time in seconds to lock the item.
         :return: ``bool``
+        :raises TypeError: if expire argument is not ``int``
         """
         if not isinstance(expire, int):
             raise TypeError('expire must be int')
@@ -233,6 +236,7 @@ class Gibson:
         :param prefix: prefix for keys.
         :param expire: ``int``, new expiration time.
         :return: ``int``, number of modified items, otherwise an error.
+        :raises TypeError: if expire argument is not ``int``
         """
         if not isinstance(expire, int):
             raise TypeError('expire must be int')
@@ -264,6 +268,7 @@ class Gibson:
         :param prefix: ``bytes``, prefix for keys.
         :param expire:``int``, lock period in seconds.
         :return: ``int``, number of modified items, otherwise an error.
+        :raises TypeError: if expire argument is not ``int``
         """
         if not isinstance(expire, int):
             raise TypeError('expire must be int')
@@ -303,7 +308,15 @@ class Gibson:
 @asyncio.coroutine
 def create_gibson(address, *, encoding=None, commands_factory=Gibson,
                   loop=None):
-    """Creates high-level Gibson interface.
+    """Create high-level Gibson interface.
+
+    :param address: ``str`` for unix socket path, or ``tuple``
+        for (host, port) tcp connection.
+    :param encoding: this argument can be used to decode byte-replies to
+        strings. By default no decoding is done.
+    :param commands_factory:
+    :param loop: event loop to use
+    :return: high-level Gibson connection ``Gibson``
     """
     conn = yield from create_connection(address, encoding=encoding, loop=loop)
     return commands_factory(conn)
