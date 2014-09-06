@@ -1,5 +1,5 @@
 .. highlight:: python
-.. module:: aioredis.commands
+.. module:: aiogibson.commands
 
 Getting started
 ===============
@@ -16,8 +16,8 @@ version >= 3.3.
 **aiogibson** has straightforward api, just like *memcached*:
 
 
-Long Example
-------------
+Basic Example
+-------------
 
 .. code:: python
 
@@ -53,29 +53,76 @@ Long Example
         # unlock given key
         yield from gibson.unlock(b'numfoo')
 
-        # fetch keys with given prefix
-        yield from gibson.keys(b'foo')
-
         # delete value
         yield from gibson.delete(b'foo')
-
-        # return list of keys with given prefix ``fo``
-        yield from gibson.keys(b'fo')
 
         # Get system stats about the Gibson instance
         info = yield from gibson.stats()
 
 
+    loop.run_until_complete(go())
 
+
+Underlying data structure trie_ allows us to perform operations on multiple
+key sets using a prefix expression:
+
+
+Multi Commands
+--------------
+
+.. code:: python
+
+    import asyncio
+    from aiogibson import create_gibson
+
+    loop = asyncio.get_event_loop()
+
+
+    @asyncio.coroutine
+    def go():
+        gibson = yield from create_gibson('/tmp/aio.sock', loop=loop)
+
+        # set the value for keys verifying the given prefix
+        yield from gibson.mset(b'fo', b'bar', 7)
+        yield from gibson.mset(b'numfo', 100, 7)
+
+        # get the values for keys with given prefix
+        result = yield from gibson.mget(b'fo')
+
+        # set the TTL for keys verifying the given prefix
+        yield from gibson.mttl(b'fo', 10)
+
+        # increment by one keys verifying the given prefix.
+        yield from gibson.minc(b'numfo')
+
+        # decrement by one keys verifying the given prefix
+        yield from gibson.mdec(b'numfoo')
+
+        # lock keys with prefix from modification
+        yield from gibson.mlock(b'fo')
+
+        # unlock keys with given prefix
+        yield from gibson.munlock(b'fo')
+
+        # delete keys verifying the given prefix.
+        yield from gibson.mdelete(b'fo')
+
+        # return list of keys with given prefix ``fo``
+        yield from gibson.keys(b'fo')
+
+        # count items for a given prefi
+        info = yield from gibson.stats()
 
 
     loop.run_until_complete(go())
+
+**aiogibson** has connection pooling support using context-manager:
 
 
 Connection Pool Example
 -----------------------
 
-    .. code:: python
+.. code:: python
 
     import asyncio
     from aiogibson import create_pool
@@ -97,4 +144,34 @@ Connection Pool Example
     loop.run_until_complete(go())
 
 
+Also you can have simple low-level interface to *gibson* server:
+
+
+Low Level Commands
+------------------
+
+.. code:: python
+
+    import asyncio
+    from aiogibson import create_gibson
+
+    loop = asyncio.get_event_loop()
+
+
+    @asyncio.coroutine
+    def go():
+        gibson = yield from create_connection('/tmp/aio.sock', loop=loop)
+        # set value
+        yield from gibson.execute(b'set', b'foo', b'bar', 7)
+        # get value
+        result = yield from gibson.execute(b'get', b'foo')
+        print(result)
+        # delete value
+        yield from gibson.execute(b'del', b'foo')
+
+    loop.run_until_complete(go())
+
+
+
 .. _documentation: http://gibson-db.in/download/
+.. _trie: http://en.wikipedia.org/wiki/Trie
