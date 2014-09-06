@@ -1,6 +1,15 @@
 Changes
 -------
 
+0.1.1 (2014-09-06)
+^^^^^^^^^^^^^^^^^^
+* Improved protocol parser;
+
+* Added type checking in high-level commands;
+
+* Added check for None arguments in connection execute command;
+
+
 0.1.0 (2014-08-17)
 ^^^^^^^^^^^^^^^^^^
 * Initial release;

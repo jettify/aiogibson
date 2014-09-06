@@ -182,7 +182,7 @@ Low Level Commands
         # delete value
         yield from gibson.execute(b'del', b'foo')
 
-    
+
     loop.run_until_complete(go())
 
 
