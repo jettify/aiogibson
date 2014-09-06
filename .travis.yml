@@ -1,22 +1,22 @@
 language: python
 
 python:
-- "3.3"
-- "3.4"
+    - "3.3"
+    - "3.4"
 
 install:
-- pip install pyflakes
-- pip install pep8
-- pip install -e .
-- wget https://github.com/evilsocket/gibson/archive/1.0.2.tar.gz
-- tar xfv 1.0.2.tar.gz
-- cd gibson-1.0.2
-- cmake . && make
-- ./gibson -c ./debian/etc/gibson/gibson.conf --logfile /tmp/test_gibson.log --unix_socket /tmp/gibson.sock
-- sleep 3
-- cd ../
+    - pip install pyflakes
+    - pip install pep8
+    - pip install -e .
+    - wget https://github.com/evilsocket/gibson/archive/1.0.2.tar.gz
+    - tar xfv 1.0.2.tar.gz
+    - cd gibson-1.0.2
+    - cmake . && make
+    - ./gibson -c ./debian/etc/gibson/gibson.conf --logfile /tmp/test_gibson.log --unix_socket /tmp/gibson.sock
+    - sleep 3
+    - cd ../
 
 script:
-- pyflakes aiogibson tests
-- pep8 aiogibson tests
-- python runtests.py -v
+    - pyflakes aiogibson tests
+    - pep8 aiogibson tests
+    - python runtests.py -v
