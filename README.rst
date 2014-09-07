@@ -3,14 +3,16 @@ aiogibson
 
 .. image:: https://travis-ci.org/jettify/aiogibson.svg?branch=master
    :target: https://travis-ci.org/jettify/aiogibson
-   :alt: Build status
-.. image:: https://pypip.in/v/aiogibson/badge.png
+   :alt: |Build status|
+.. image:: https://pypip.in/v/aiogibson/badge.svg
    :target: https://pypi.python.org/pypi/aiogibson/
-   :alt: Latest PyPI version
-.. image:: https://pypip.in/d/aiogibson/badge.png
+   :alt: |Latest PyPI version|
+.. image:: https://pypip.in/d/aiogibson/badge.svg
    :target: https://pypi.python.org/pypi/aiogibson/
-   :alt: Number of PyPI downloads
-
+   :alt: |Number of PyPI downloads|
+.. image:: https://pypip.in/license/aiogibson/badge.svg
+    :target: https://pypi.python.org/pypi/aiogibson/
+    :alt: |License|
 
 
 **aiogibson** is a library for accessing a gibson_ cache database
