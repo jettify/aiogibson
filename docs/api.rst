@@ -17,6 +17,11 @@ Protocol Parser
 .. automodule:: aiogibson.parser
    :members:
 
+Exceptions
+==========
+.. automodule:: aiogibson.errors
+   :members:
+
 High Level Commands
 ===================
 .. automodule:: aiogibson.commands
