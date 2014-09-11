@@ -65,7 +65,7 @@ class GibsonConnection:
         """Responses reader task."""
         while not self._reader.at_eof():
             data = yield from self._reader.read(MAX_CHUNK_SIZE)
-            self._parser.feed_data(data)
+            self._parser.feed(data)
             while True:
                 try:
                     obj = self._parser.gets()

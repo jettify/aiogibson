@@ -20,7 +20,7 @@ class Reader(object):
         self._gb_encoding = None
         self._code = None
 
-    def feed_data(self, data):
+    def feed(self, data):
         """Put raw chunk of data obtained from connection to buffer.
 
         :param data: ``bytes``, raw input data.
