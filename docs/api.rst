@@ -1,5 +1,5 @@
 :mod:`aiogibson` --- API Reference
-=================================
+==================================
 
 
 Connection Object

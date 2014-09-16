@@ -14,11 +14,11 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(obj, None)
 
     def test_val(self):
-        data = b'\x06\x00\x05\x03\x00\x00\x00bar'
+        data = b'\x06\x00\x00\x03\x00\x00\x00bar'
         parser = Reader()
         parser.feed(data)
-        with self.assertRaises(ProtocolError):
-            parser.gets()
+        resp = parser.gets()
+        self.assertEqual(resp, b'bar')
 
     def test_kv(self):
         data = b'\x07\x00\x007\x00\x00\x00\x03\x00\x00\x00\x04\x00\x00\x00' \
@@ -52,6 +52,14 @@ class ParserTest(unittest.TestCase):
                 self.assertEqual(obj, b'zap')
             else:
                 self.assertEqual(obj, False)
+
+    def test_data_error(self):
+        # case where we do not know how to unpack gibson data type
+        data = b'\x06\x00\x05\x03\x00\x00\x00bar'
+        parser = Reader()
+        parser.feed(data)
+        with self.assertRaises(ProtocolError):
+            parser.gets()
 
     def test_err_generic(self):
         data = b'\x00\x00\x00\x01\x00\x00\x00\x00'

@@ -1,8 +1,6 @@
-"""
-Borrowed from aioredis.
-
-:see: https://github.com/aio-libs/aioredis/blob/master/aioredis/connection.py
-"""
+"""Low level connection with raw interface."""
+# Borrowed from aioredis.
+# :see: https://github.com/aio-libs/aioredis/blob/master/aioredis/connection.py
 
 import asyncio
 

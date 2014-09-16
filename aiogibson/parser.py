@@ -1,3 +1,34 @@
+"""The ``Reader`` class has two methods that are used when parsing replies
+from a stream of data. Reader.feed takes a string argument that is appended to
+the internal buffer. ``Reader``.gets reads this buffer and returns a reply
+when the buffer contains a full reply. If a single call to feed contains
+multiple replies, gets should be called multiple times to extract all replies.
+
+>>> reader = aiogibson.Reader()
+>>> reader.feed(b'\\x06\\x00\\x05\\x03\\x00\\x00\\x00bar')
+>>> reader.gets()
+b'bar'
+
+When the buffer does not contain a full reply, gets returns False.
+This means extra data is needed and feed should be called again before
+calling gets again:
+
+>>> reader.feed(b'\x06\x00\x05')
+>>> reader.gets()
+False
+>>> reader.feed(b'\\x03\\x00\\x00\\x00bar')
+>>> reader.gets()
+b'bar'
+
+:note: api same as in *hiredis*.
+
+
+This module has ``encode_command``, packs *gibson* command to binary format
+suitable to send over socket to *gibson* server:
+
+>>> encode_command(b'set', 3600, 'foo', 3.14)
+b'\\x0f\\x00\\x00\\x00\\x01\\x003600 foo 3.14'
+"""
 import struct
 from . import consts
 from . import errors
@@ -9,7 +40,8 @@ __all__ = ['encode_command', 'Reader']
 class Reader(object):
     """This class is responsible for parsing replies from the stream
     of data that is read from a *Gibson* connection. It does not contain
-    functionality to handle I/O"""
+    functionality to handle I/O
+    """
 
     def __init__(self):
         self._buffer = bytearray()
@@ -93,7 +125,7 @@ class Reader(object):
             result.append(key)
             offset += key_size
             # unpack value encoding
-            value_gb_encodig = struct.unpack('B', data[offset: offset + 1])[0]
+            value_gb_encoding = struct.unpack('B', data[offset: offset + 1])[0]
             offset += 1
             # unpack value size
             value_size = \
@@ -101,7 +133,7 @@ class Reader(object):
             offset += consts.REPL_SIZE
             # unpack value
             value = self._parse_value(data[offset: offset + value_size],
-                                      value_gb_encodig)
+                                      value_gb_encoding)
             result.append(value)
             offset += value_size
         return result
@@ -138,7 +170,7 @@ _converters = {
 
 
 def encode_command(command, *args):
-    """Pack and encode *gibson* command acording to gibson binary protocol
+    """Pack and encode *gibson* command according to gibson binary protocol
 
     :see: http://gibson-db.in/protocol/
 
