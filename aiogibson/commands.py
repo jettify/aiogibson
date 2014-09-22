@@ -25,16 +25,14 @@ class Gibson:
         """True if connection is closed."""
         return self._conn.closed
 
-    @asyncio.coroutine
     def get(self, key):
         """Get the value for a given key.
 
         :param key: ``bytes``  key to get.
         :return: ``bytes`` if value exists else ``None``
         """
-        return (yield from self._conn.execute(b'get', key))
+        return self._conn.execute(b'get', key)
 
-    @asyncio.coroutine
     def set(self, key, value, expire=0):
         """Set the value for the given key, with an optional TTL.
 
@@ -45,7 +43,7 @@ class Gibson:
         """
         if not isinstance(expire, int):
             raise TypeError('expire must be int')
-        return (yield from self._conn.execute(b'set', expire, key, value))
+        return self._conn.execute(b'set', expire, key, value)
 
     @asyncio.coroutine
     def delete(self, key):
@@ -71,23 +69,21 @@ class Gibson:
         result = yield from self._conn.execute(b'ttl', key, expire)
         return bool(result)
 
-    @asyncio.coroutine
     def inc(self, key):
         """Increment by one the given key.
 
         :param key: ``bytes``, key to increment.
         :return: ``int`` incremented value
         """
-        return (yield from self._conn.execute(b'inc', key))
+        return self._conn.execute(b'inc', key)
 
-    @asyncio.coroutine
     def dec(self, key):
         """Decrement by one the given key.
 
         :param key: ``bytes``, key to decrement.
         :return: ``int`` decremented value in case of success
         """
-        return (yield from self._conn.execute(b'dec', key))
+        return self._conn.execute(b'dec', key)
 
     @asyncio.coroutine
     def lock(self, key, expire=0):
@@ -125,69 +121,60 @@ class Gibson:
         keys = [r for i, r in enumerate(result) if i % 2]
         return keys
 
-    @asyncio.coroutine
     def stats(self):
         """Get system stats about the Gibson instance.
 
         :return: ``list`` of pairs (stat, value).
         """
-        result = yield from self._conn.execute(b'stats')
-        return result
+        return self._conn.execute(b'stats')
 
-    @asyncio.coroutine
     def ping(self):
         """Ping the server instance to refresh client last seen timestamp.
 
         :return: ``True`` or error.
         """
-        return (yield from self._conn.execute(b'ping'))
+        return self._conn.execute(b'ping')
 
-    @asyncio.coroutine
     def meta_size(self, key):
         """The size in bytes of the item value.
 
         :param key: ``bytes``, key of interest.
         :return: ``int``, value size in bytes
         """
-        return (yield from self._conn.execute(b'meta', key, b'size'))
+        return self._conn.execute(b'meta', key, b'size')
 
-    @asyncio.coroutine
     def meta_encoding(self, key):
         """Gibson encoding for given value.
 
         :param key: ``bytes``, key of interest.
         :return: ``int``, gibson encoding, 0 - ``bytes``, 2 - ``int``.
         """
-        return (yield from self._conn.execute(b'meta', key, b'encoding'))
+        return self._conn.execute(b'meta', key, b'encoding')
 
-    @asyncio.coroutine
     def meta_access(self, key):
         """Timestamp of the last time the item was accessed.
 
         :param key: ``bytes``, key of interest.
         :return: ``int``, timestamp
         """
-        return (yield from self._conn.execute(b'meta', key, b'access'))
+        return self._conn.execute(b'meta', key, b'access')
 
-    @asyncio.coroutine
     def meta_created(self, key):
         """Timestamp of item creation.
 
         :param key: ``bytes``, key of interest.
         :return: ``int``, timestamp
         """
-        return (yield from self._conn.execute(b'meta', key, b'created'))
+        return self._conn.execute(b'meta', key, b'created')
 
-    @asyncio.coroutine
     def meta_ttl(self, key):
         """Item specified time to live, -1 for infinite TTL.
 
         :param key: ``bytes``, key of interest.
         :return: ``int``, seconds of TTL.
         """
-        return (yield from self._conn.execute(b'meta', key,  b'ttl'))
+        return self._conn.execute(b'meta', key,  b'ttl')
 
-    @asyncio.coroutine
     def meta_left(self, key):
         """Number of seconds left for the item to live if a ttl
         was specified, otherwise -1.
@@ -195,41 +182,36 @@ class Gibson:
         :param key: ``bytes``, key of interest.
         :return: ``int``, Number of seconds left.
         """
-        return (yield from self._conn.execute(b'meta', key, b'left'))
+        return self._conn.execute(b'meta', key, b'left')
 
-    @asyncio.coroutine
     def meta_lock(self, key):
         """Number of seconds the item is locked, -1 if there's no lock.
 
         :param key: ``bytes``, key of interest.
         :return: ``int``, number of seconds
         """
-        return (yield from self._conn.execute(b'meta', key, b'lock'))
+        return self._conn.execute(b'meta', key, b'lock')
 
-    @asyncio.coroutine
     def end(self):
         """Disconnects from the client from gibson instance."""
-        return (yield from self._conn.execute(b'end'))
+        return self._conn.execute(b'end')
 
-    @asyncio.coroutine
     def mset(self, prefix, value):
         """Set the value for keys verifying the given prefix.
 
         :param prefix: prefix for keys.
         :return: ``int``, number of modified items, otherwise an error.
         """
-        return (yield from self._conn.execute(b'mset', prefix, value))
+        return self._conn.execute(b'mset', prefix, value)
 
-    @asyncio.coroutine
     def mget(self, prefix):
         """Get the values for keys with given prefix.
 
         :param prefix: prefix for keys.
         :return: ``list`` of key/value pairs
         """
-        return (yield from self._conn.execute(b'mget', prefix))
+        return self._conn.execute(b'mget', prefix)
 
-    @asyncio.coroutine
     def mttl(self, prefix, expire=0):
         """Set the TTL for keys verifying the given prefix.
 
@@ -240,27 +222,24 @@ class Gibson:
         """
         if not isinstance(expire, int):
             raise TypeError('expire must be int')
-        return (yield from self._conn.execute(b'mttl', prefix, expire))
+        return self._conn.execute(b'mttl', prefix, expire)
 
-    @asyncio.coroutine
     def minc(self, prefix):
         """Increment by one keys verifying the given prefix.
 
         :param prefix: prefix for keys.
         :return: ``int``, number of modified items, otherwise an error.
         """
-        return (yield from self._conn.execute(b'minc', prefix))
+        return self._conn.execute(b'minc', prefix)
 
-    @asyncio.coroutine
     def mdec(self, prefix):
         """Decrement by one keys verifying the given prefix.
 
         :param prefix: prefix for keys.
         :return: ``int``, number of modified items, otherwise an error.
         """
-        return (yield from self._conn.execute(b'mdec', prefix))
+        return self._conn.execute(b'mdec', prefix)
 
-    @asyncio.coroutine
     def mlock(self, prefix, expire=0):
         """Prevent keys verifying the given prefix from being modified
         for a given amount of seconds.
@@ -272,37 +251,31 @@ class Gibson:
         """
         if not isinstance(expire, int):
             raise TypeError('expire must be int')
-        result = yield from self._conn.execute(b'mlock', prefix, expire)
-        return result
+        return self._conn.execute(b'mlock', prefix, expire)
 
-    @asyncio.coroutine
     def munlock(self, prefix):
         """Remove the lock on keys verifying the given prefix.
 
         :param prefix: prefix for keys.
         :return: ``int``, number of affected items, otherwise an error.
         """
-        result = yield from self._conn.execute(b'munlock', prefix)
-        return result
+        return self._conn.execute(b'munlock', prefix)
 
-    @asyncio.coroutine
     def mdelete(self, prefix):
         """Delete keys verifying the given prefix.
 
         :param prefix: prefix for keys.
         :return: ``int``, number of modified items, otherwise an error.
         """
-        result = yield from self._conn.execute(b'mdel', prefix)
-        return result
+        return self._conn.execute(b'mdel', prefix)
 
-    @asyncio.coroutine
     def count(self, prefix):
         """Count items for a given prefix.
 
         :param prefix: ``bytes`` The key prefix to use as expression
         :return: ``int`` number of elements
         """
-        return (yield from self._conn.execute(b'count', prefix))
+        return self._conn.execute(b'count', prefix)
 
 
 @asyncio.coroutine
