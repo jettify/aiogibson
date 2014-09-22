@@ -3,6 +3,7 @@
 # :see: https://github.com/aio-libs/aioredis/blob/master/aioredis/connection.py
 
 import asyncio
+from collections import deque
 
 from .errors import GibsonError, ProtocolError
 from .parser import Reader, encode_command
@@ -47,7 +48,7 @@ class GibsonConnection:
         self._reader = reader
         self._writer = writer
         self._loop = loop
-        self._waiters = asyncio.Queue(loop=self._loop)
+        self._waiters = deque()
         self._parser = Reader()
         self._reader_task = asyncio.Task(self._read_data(), loop=self._loop)
         self._closing = False
@@ -76,15 +77,21 @@ class GibsonConnection:
                 else:
                     if obj is False:
                         break
-                    waiter = yield from self._waiters.get()
+                    fut, encoding = self._waiters.popleft()
                     if isinstance(obj, GibsonError):
-                        waiter.set_exception(obj)
+                        fut.set_exception(obj)
                     else:
-                        waiter.set_result(obj)
+                        if encoding is not None and isinstance(obj, bytes):
+                            try:
+                                obj = obj.decode(encoding)
+                            except Exception as exc:
+                                fut.set_exception(exc)
+                                continue
+                        fut.set_result(obj)
+
         self._closing = True
         self._loop.call_soon(self._do_close, None)
 
-    @asyncio.coroutine
     def execute(self, command, *args, encoding=_NOTSET):
         """Executes raw gibson command.
 
@@ -96,27 +103,20 @@ class GibsonConnection:
         :raises ProtocolError: when response can not be decoded meaning
             connection is broken.
         """
-
         assert self._reader and not self._reader.at_eof(), (
             "Connection closed or corrupted")
-
         if command is None:
             raise TypeError("command must not be None")
         if None in set(args):
             raise TypeError("args must not contain None")
-
         command = command.strip()
         data = encode_command(command, *args)
-        self._writer.write(data)
-        yield from self._writer.drain()
-        fut = asyncio.Future(loop=self._loop)
-        yield from self._waiters.put(fut)
-        result = yield from fut
         if encoding is _NOTSET:
             encoding = self._encoding
-        if encoding is not None and isinstance(result, bytes):
-            return result.decode(encoding)
-        return result
+        fut = asyncio.Future(loop=self._loop)
+        self._waiters.append((fut, encoding))
+        self._writer.write(data)
+        return fut
 
     def close(self):
         """Close connection."""
@@ -132,7 +132,7 @@ class GibsonConnection:
         self._reader_task = None
         self._writer = None
         self._reader = None
-        while self._waiters.qsize():
+        while self._waiters:
             waiter = self._waiters.get_nowait()
             if exc is None:
                 waiter.cancel()
