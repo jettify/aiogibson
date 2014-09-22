@@ -146,11 +146,17 @@ Connection Pool Example
     def go():
         pool = yield from create_pool('/tmp/aio.sock', minsize=5, maxsize=10,
                                       loop=loop)
-
+        # using context manager
         with (yield from pool) as gibson:
             yield from gibson.set('foo', 'bar')
             value = yield from gibson.get('foo')
             print(value)
+
+        # NOTE: experimental feature
+        # or without context manager
+        yield from pool.set('foo', 'bar')
+        resp = yield from pool.get('foo')
+        yield from pool.delete('foo')
 
         pool.clear()
 
