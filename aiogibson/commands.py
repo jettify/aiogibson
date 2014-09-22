@@ -45,17 +45,15 @@ class Gibson:
             raise TypeError('expire must be int')
         return self._conn.execute(b'set', expire, key, value)
 
-    @asyncio.coroutine
     def delete(self, key):
         """ Delete the given key.
 
         :param key: ``bytes`` key to delete.
         :return: ``bool`` true in case of success.
         """
-        result = (yield from self._conn.execute(b'del', key))
-        return bool(result)
+        result = self._conn.execute(b'del', key)
+        return wait_convert(result, bool)
 
-    @asyncio.coroutine
     def ttl(self, key, expire):
         """Set the TTL of a key.
 
@@ -66,8 +64,8 @@ class Gibson:
         """
         if not isinstance(expire, int):
             raise TypeError('expire must be int')
-        result = yield from self._conn.execute(b'ttl', key, expire)
-        return bool(result)
+        result = self._conn.execute(b'ttl', key, expire)
+        return wait_convert(result, bool)
 
     def inc(self, key):
         """Increment by one the given key.
@@ -85,7 +83,6 @@ class Gibson:
         """
         return self._conn.execute(b'dec', key)
 
-    @asyncio.coroutine
     def lock(self, key, expire=0):
         """Prevent the given key from being modified for a given amount
         of seconds.
@@ -97,29 +94,26 @@ class Gibson:
         """
         if not isinstance(expire, int):
             raise TypeError('expire must be int')
-        result = yield from self._conn.execute(b'lock', key, expire)
-        return bool(result)
+        result = self._conn.execute(b'lock', key, expire)
+        return wait_convert(result, bool)
 
-    @asyncio.coroutine
     def unlock(self, key):
         """Remove the lock from the given key.
 
         :param key: ``bytes`` key ot unlock.
         :return: ``bool``, True in case of success.
         """
-        result = yield from self._conn.execute(b'unlock', key)
-        return bool(result)
+        result = self._conn.execute(b'unlock', key)
+        return wait_convert(result, bool)
 
-    @asyncio.coroutine
     def keys(self, prefix):
         """Return a list of keys matching the given prefix.
 
         :param prefix: key prefix to use as expression.
         :return: ``list`` of available keys
         """
-        result = yield from self._conn.execute(b'keys', prefix)
-        keys = [r for i, r in enumerate(result) if i % 2]
-        return keys
+        result = self._conn.execute(b'keys', prefix)
+        return wait_convert(result, key_pairs)
 
     def stats(self):
         """Get system stats about the Gibson instance.
@@ -293,3 +287,13 @@ def create_gibson(address, *, encoding=None, commands_factory=Gibson,
     """
     conn = yield from create_connection(address, encoding=encoding, loop=loop)
     return commands_factory(conn)
+
+
+@asyncio.coroutine
+def wait_convert(fut, type_):
+    result = yield from fut
+    return type_(result)
+
+
+def key_pairs(obj):
+    return [r for i, r in enumerate(obj) if i % 2]
