@@ -62,6 +62,26 @@ class PoolTest(BaseTest):
         self.assertEqual(pool.freesize, 10)
 
     @run_until_complete
+    def test_simple_without_context_manager(self):
+        pool = yield from create_pool(
+            self.gibson_socket,
+            minsize=10, loop=self.loop)
+
+        msg = yield from pool.ping()
+        self.assertTrue(msg)
+        yield from pool.set(b'foo', b'bar', 7)
+        result = yield from pool.get(b'foo')
+        self.assertEqual(result, b'bar')
+        resp = yield from pool.delete(b'foo')
+        self.assertTrue(resp)
+
+        with self.assertRaises(AttributeError):
+            yield from pool.zadd(b'foo')
+
+        self.assertEqual(pool.size, 10)
+        self.assertEqual(pool.freesize, 10)
+
+    @run_until_complete
     def test_create_new(self):
         pool = yield from create_pool(
             self.gibson_socket,

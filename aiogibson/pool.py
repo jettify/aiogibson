@@ -162,6 +162,15 @@ class GibsonPool:
         conn = yield from self.acquire()
         return _ConnectionContextManager(self, conn)
 
+    def __getattr__(self, method):
+
+        @asyncio.coroutine
+        def caller(*args, **kw):
+            with (yield from self) as gibson:
+                resp = yield from getattr(gibson, method)(*args, **kw)
+            return resp
+        return caller
+
 
 class _ConnectionContextManager:
 
