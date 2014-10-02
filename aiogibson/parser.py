@@ -91,23 +91,24 @@ class Reader(object):
 
     def _parse_replay(self):
         if self._code == consts.REPL_ERR:
-            return errors.GibsonServerError()
+            resp = errors.GibsonServerError()
         elif self._code == consts.REPL_OK:
-            return True
+            resp = True
         elif self._code == consts.REPL_ERR_NOT_FOUND:
-            return None
+            resp = None
         elif self._code == consts.REPL_ERR_NAN:
-            return errors.ExpectedANumber()
+            resp = errors.ExpectedANumber()
         elif self._code == consts.REPL_ERR_MEM:
-            return errors.MemoryLimitError()
+            resp = errors.MemoryLimitError()
         elif self._code == consts.REPL_ERR_LOCKED:
-            return errors.KeyLockedError()
+            resp = errors.KeyLockedError()
         elif self._code == consts.REPL_VAL:
-            return self._parse_value(self._payload, self._gb_encoding)
+            resp = self._parse_value(self._payload, self._gb_encoding)
         elif self._code == consts.REPL_KVAL:
-            return self._parse_kv(self._payload)
+            resp = self._parse_kv(self._payload)
         else:
             raise errors.ProtocolError()
+        return resp
 
     def _parse_kv(self, data):
         # parse key/value replay from Gibson server
