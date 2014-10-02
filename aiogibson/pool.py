@@ -18,6 +18,11 @@
             value = yield from gibson.get('foo')
             print(value)
 
+        # or without context manager
+        yield from pool.set('foo', 'bar')
+        resp = yield from pool.get('foo')
+        yield from pool.delete('foo')
+
         pool.clear()
 
     loop.run_until_complete(go())
@@ -125,7 +130,8 @@ class GibsonPool:
         return conn
 
     def release(self, conn):
-        """Returns used connection back into pool.
+        """Returns connection back into pool. Since this method is used
+         in ``__exit__()``, this method must not be coroutine.
         """
         assert conn in self._used, "Invalid connection, maybe from other pool"
         self._used.remove(conn)
@@ -163,7 +169,8 @@ class GibsonPool:
         return _ConnectionContextManager(self, conn)
 
     def __getattr__(self, method):
-
+        # we have nice AttributeError here in case *method* is not found in
+        # Gibson class (high level interface)
         @asyncio.coroutine
         def caller(*args, **kw):
             with (yield from self) as gibson:
