@@ -1,6 +1,18 @@
 Changes
 -------
 
+
+0.1.2 (2014-10-15)
+^^^^^^^^^^^^^^^^^^
+* Changed Reader interface to be similar to hiredis;
+
+* Most methods from high level interface now returns Future;
+
+* Connection pool, works as drop in replacement to high level connection;
+
+* added more docstrings;
+
+
 0.1.1 (2014-09-06)
 ^^^^^^^^^^^^^^^^^^
 * Improved protocol parser;
