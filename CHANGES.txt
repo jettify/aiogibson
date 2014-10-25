@@ -6,11 +6,11 @@ Changes
 ^^^^^^^^^^^^^^^^^^
 * Changed Reader interface to be similar to hiredis;
 
-* Most methods from high level interface now returns Future;
+* Most methods from high level interface now return Future;
 
-* Connection pool, works as drop in replacement to high level connection;
+* Connection pool, works as drop in replacement for high level connection;
 
-* added more docstrings;
+* Added more docstrings;
 
 
 0.1.1 (2014-09-06)
