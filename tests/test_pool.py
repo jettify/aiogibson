@@ -1,7 +1,5 @@
-"""
-Copied from:
-:see: https://github.com/aio-libs/aioredis/blob/master/tests/pool_test.py
-"""
+# see: https://github.com/aio-libs/aioredis/blob/master/tests/pool_test.py
+
 import asyncio
 
 from ._testutil import BaseTest, run_until_complete

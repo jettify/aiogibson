@@ -1,6 +1,5 @@
 import unittest
-from aiogibson import ProtocolError, ExpectedANumber, MemoryLimitError, \
-    KeyLockedError, GibsonError
+from aiogibson import errors
 from aiogibson.parser import Reader, encode_command
 
 
@@ -58,7 +57,7 @@ class ParserTest(unittest.TestCase):
         data = b'\x06\x00\x05\x03\x00\x00\x00bar'
         parser = Reader()
         parser.feed(data)
-        with self.assertRaises(ProtocolError):
+        with self.assertRaises(errors.ProtocolError):
             parser.gets()
 
     def test_err_generic(self):
@@ -66,28 +65,28 @@ class ParserTest(unittest.TestCase):
         parser = Reader()
         parser.feed(data)
         obj = parser.gets()
-        self.assertIsInstance(obj, GibsonError)
+        self.assertIsInstance(obj, errors.GibsonError)
 
     def test_err_nan(self):
         data = b'\x02\x00\x00\x01\x00\x00\x00\x00'
         parser = Reader()
         parser.feed(data)
         obj = parser.gets()
-        self.assertIsInstance(obj, ExpectedANumber)
+        self.assertIsInstance(obj, errors.ExpectedANumber)
 
     def test_err_mem(self):
         data = b'\x03\x00\x00\x01\x00\x00\x00\x00'
         parser = Reader()
         parser.feed(data)
         obj = parser.gets()
-        self.assertIsInstance(obj, MemoryLimitError)
+        self.assertIsInstance(obj, errors.MemoryLimitError)
 
     def test_err_locked(self):
         data = b'\x04\x00\x00\x01\x00\x00\x00\x00'
         parser = Reader()
         parser.feed(data)
         obj = parser.gets()
-        self.assertIsInstance(obj, KeyLockedError)
+        self.assertIsInstance(obj, errors.KeyLockedError)
 
     def test_ok(self):
         data = b'\x05\x00\x00\x01\x00\x00\x00\x00'
@@ -100,7 +99,7 @@ class ParserTest(unittest.TestCase):
         data = b'\x09\x00\x00\x01\x00\x00\x00\x00'
         parser = Reader()
         parser.feed(data)
-        with self.assertRaises(ProtocolError):
+        with self.assertRaises(errors.ProtocolError):
             parser.gets()
 
     def test_gb_encoding(self):

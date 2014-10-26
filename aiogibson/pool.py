@@ -10,8 +10,8 @@
 
     @asyncio.coroutine
     def go():
-        pool = yield from create_pool('/tmp/aio.sock', minsize=5, maxsize=10,
-                                      loop=loop)
+        pool = yield from create_pool('/tmp/gibson.sock', minsize=5,
+                                      maxsize=10, loop=loop)
 
         with (yield from pool) as gibson:
             yield from gibson.set('foo', 'bar')

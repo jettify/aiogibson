@@ -43,7 +43,7 @@ Example
 
     @asyncio.coroutine
     def go():
-        gibson = yield from create_gibson('/tmp/aio.sock', loop=loop)
+        gibson = yield from create_gibson('/tmp/gibson.sock', loop=loop)
         # set value
         yield from gibson.set(b'foo', b'bar', 7)
         yield from gibson.set(b'numfoo', 100, 7)
@@ -93,7 +93,7 @@ Multi Commands
 
     @asyncio.coroutine
     def go():
-        gibson = yield from create_gibson('/tmp/aio.sock', loop=loop)
+        gibson = yield from create_gibson('/tmp/gibson.sock', loop=loop)
 
         # set the value for keys verifying the given prefix
         yield from gibson.mset(b'fo', b'bar', 7)
@@ -144,7 +144,7 @@ Connection Pool Example
 
     @asyncio.coroutine
     def go():
-        pool = yield from create_pool('/tmp/aio.sock', minsize=5, maxsize=10,
+        pool = yield from create_pool('/tmp/gibson.sock', minsize=5, maxsize=10,
                                       loop=loop)
         # using context manager
         with (yield from pool) as gibson:
@@ -179,7 +179,7 @@ Low Level Commands
 
     @asyncio.coroutine
     def go():
-        gibson = yield from create_connection('/tmp/aio.sock', loop=loop)
+        gibson = yield from create_connection('/tmp/gibson.sock', loop=loop)
 
         # set value
         yield from gibson.execute(b'set', b'foo', b'bar', 7)

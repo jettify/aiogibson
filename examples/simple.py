@@ -1,13 +1,13 @@
-
 import asyncio
 from aiogibson import create_gibson
+
 
 loop = asyncio.get_event_loop()
 
 
 @asyncio.coroutine
 def go():
-    gibson = yield from create_gibson('/tmp/aio.sock', loop=loop)
+    gibson = yield from create_gibson('/tmp/gibson.sock', loop=loop)
     # set value
     yield from gibson.set(b'foo', b'bar', 7)
     # get value
@@ -17,3 +17,5 @@ def go():
     yield from gibson.delete(b'foo')
 
 loop.run_until_complete(go())
+
+
