@@ -15,17 +15,18 @@ class PoolTest(BaseTest):
         self.assertEqual(pool.size, 10)
         self.assertEqual(pool.freesize, 10)
 
+    @run_until_complete
     def test_connect(self):
-        pool = self.loop.run_until_complete(create_pool(
-            self.gibson_socket, loop=self.loop))
+        pool = yield from create_pool(self.gibson_socket, loop=self.loop)
         self._assert_defaults(pool)
+        yield from pool.clear()
 
+    @run_until_complete
     def test_global_loop(self):
         asyncio.set_event_loop(self.loop)
-
-        pool = self.loop.run_until_complete(create_pool(
-            self.gibson_socket))
+        pool = yield from create_pool(self.gibson_socket)
         self._assert_defaults(pool)
+        yield from pool.clear()
 
     @run_until_complete
     def test_clear(self):
@@ -44,6 +45,7 @@ class PoolTest(BaseTest):
         with self.assertRaises(RuntimeError):
             with pool:
                 pass
+        yield from pool.clear()
 
     @run_until_complete
     def test_simple_command(self):
@@ -58,6 +60,7 @@ class PoolTest(BaseTest):
             self.assertEqual(pool.freesize, 9)
         self.assertEqual(pool.size, 10)
         self.assertEqual(pool.freesize, 10)
+        yield from pool.clear()
 
     @run_until_complete
     def test_simple_without_context_manager(self):
@@ -78,6 +81,7 @@ class PoolTest(BaseTest):
 
         self.assertEqual(pool.size, 10)
         self.assertEqual(pool.freesize, 10)
+        yield from pool.clear()
 
     @run_until_complete
     def test_create_new(self):
@@ -97,6 +101,7 @@ class PoolTest(BaseTest):
 
         self.assertEqual(pool.size, 2)
         self.assertEqual(pool.freesize, 2)
+        yield from pool.clear()
 
     @run_until_complete
     def test_create_constraints(self):
@@ -114,6 +119,7 @@ class PoolTest(BaseTest):
                 yield from asyncio.wait_for(pool.acquire(),
                                             timeout=0.2,
                                             loop=self.loop)
+        yield from pool.clear()
 
     @run_until_complete
     def test_create_no_minsize(self):
@@ -132,6 +138,7 @@ class PoolTest(BaseTest):
                 self.assertEqual(pool.freesize, 0)
         self.assertEqual(pool.size, 1)
         self.assertEqual(pool.freesize, 1)
+        yield from pool.clear()
 
     @run_until_complete
     def test_release_closed(self):
@@ -143,20 +150,28 @@ class PoolTest(BaseTest):
 
         with (yield from pool) as gibson:
             gibson.close()
+            yield from gibson.wait_closed()
         self.assertEqual(pool.size, 0)
         self.assertEqual(pool.freesize, 0)
+        yield from pool.clear()
 
     @run_until_complete
     def test_release_bad_connection(self):
         pool = yield from create_pool(
             self.gibson_socket,
             loop=self.loop)
-        yield from pool.acquire()
+        conn = yield from pool.acquire()
         other_conn = yield from create_gibson(
             self.gibson_socket,
             loop=self.loop)
         with self.assertRaises(AssertionError):
             pool.release(other_conn)
+
+        yield from pool.clear()
+        conn.close()
+        yield from conn.wait_closed()
+        other_conn.close()
+        yield from other_conn.wait_closed()
 
     @run_until_complete
     def test_response_decoding(self):
@@ -170,3 +185,4 @@ class PoolTest(BaseTest):
         with (yield from pool) as gibson:
             res = yield from gibson.get('key')
             self.assertEqual(res, 'value')
+        yield from pool.clear()

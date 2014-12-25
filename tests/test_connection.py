@@ -9,12 +9,16 @@ class ConnectionTest(BaseTest):
         conn = yield from create_connection(self.gibson_socket, loop=self.loop)
         res = yield from conn.execute(b'ping')
         self.assertTrue(res)
+        conn.close()
+        yield from conn.wait_closed()
 
     @run_until_complete
     def test_encoding_property(self):
         conn = yield from create_connection(self.gibson_socket,
                                             encoding='utf-8', loop=self.loop)
         self.assertEqual(conn.encoding, 'utf-8')
+        conn.close()
+        yield from conn.wait_closed()
 
     @run_until_complete
     def test_execute(self):
@@ -27,3 +31,5 @@ class ConnectionTest(BaseTest):
 
         with self.assertRaises(TypeError):
             yield from conn.execute(b'set', None)
+        conn.close()
+        yield from conn.wait_closed()

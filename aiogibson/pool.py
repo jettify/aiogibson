@@ -107,6 +107,7 @@ class GibsonPool:
         while not self._pool.empty():
             conn = yield from self._pool.get()
             conn.close()
+            yield from conn.wait_closed()
 
     @property
     def encoding(self):

@@ -20,6 +20,10 @@ class Gibson:
     def close(self):
         self._conn.close()
 
+    @asyncio.coroutine
+    def wait_closed(self):
+        yield from self._conn.wait_closed()
+
     @property
     def closed(self):
         """True if connection is closed."""

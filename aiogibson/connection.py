@@ -53,6 +53,8 @@ class GibsonConnection:
         self._reader_task = asyncio.Task(self._read_data(), loop=self._loop)
         self._closing = False
         self._closed = False
+        self._close_waiter = asyncio.Future(loop=self._loop)
+        self._reader_task.add_done_callback(self._close_waiter.set_result)
         self._address = address
         self._encoding = encoding
 
@@ -62,7 +64,7 @@ class GibsonConnection:
     @asyncio.coroutine
     def _read_data(self):
         """Responses reader task."""
-        while not self._reader.at_eof():
+        while not self._reader.at_eof() and not self._closed:
             data = yield from self._reader.read(MAX_CHUNK_SIZE)
             self._parser.feed(data)
             while True:
@@ -78,6 +80,10 @@ class GibsonConnection:
                     if obj is False:
                         break
                     fut, encoding = self._waiters.popleft()
+                    if fut.done():  # waiter possibly
+                        assert fut.cancelled(), (
+                            "waiting future is in wrong state", fut, obj)
+                        continue
                     if isinstance(obj, GibsonError):
                         fut.set_exception(obj)
                     else:
@@ -138,6 +144,10 @@ class GibsonConnection:
                 waiter.cancel()
             else:
                 waiter.set_exception(exc)
+
+    @asyncio.coroutine
+    def wait_closed(self):
+        yield from self._close_waiter
 
     @property
     def closed(self):

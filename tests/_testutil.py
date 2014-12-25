@@ -39,5 +39,6 @@ class GibsonTest(BaseTest):
 
     def tearDown(self):
         self.gibson.close()
+        self.loop.run_until_complete(self.gibson.wait_closed())
         del self.gibson
         super().tearDown()
