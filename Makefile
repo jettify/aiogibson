@@ -15,7 +15,7 @@ flake:
 test:
 	$(PYTHON) runtests.py -v
 
-cov coverage:
+cov coverage: flake
 	$(PYTHON) runtests.py --coverage
 
 clean:
