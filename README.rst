@@ -2,14 +2,17 @@ aiogibson
 =========
 
 .. image:: https://travis-ci.org/jettify/aiogibson.svg?branch=master
-   :target: https://travis-ci.org/jettify/aiogibson
-   :alt: |Build status|
+    :target: https://travis-ci.org/jettify/aiogibson
+    :alt: |Build status|
+.. image:: https://coveralls.io/repos/jettify/aiogibson/badge.png?branch=master
+    :target: https://coveralls.io/r/jettify/aiogibson?branch=master
+    :alt: |Coverage|
 .. image:: https://pypip.in/v/aiogibson/badge.svg
-   :target: https://pypi.python.org/pypi/aiogibson/
-   :alt: |Latest PyPI version|
+    :target: https://pypi.python.org/pypi/aiogibson/
+    :alt: |Latest PyPI version|
 .. image:: https://pypip.in/d/aiogibson/badge.svg
-   :target: https://pypi.python.org/pypi/aiogibson/
-   :alt: |Number of PyPI downloads|
+    :target: https://pypi.python.org/pypi/aiogibson/
+    :alt: |Number of PyPI downloads|
 .. image:: https://pypip.in/license/aiogibson/badge.svg
     :target: https://pypi.python.org/pypi/aiogibson/
     :alt: |License|
