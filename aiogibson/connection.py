@@ -139,7 +139,7 @@ class GibsonConnection:
         self._writer = None
         self._reader = None
         while self._waiters:
-            waiter = self._waiters.get_nowait()
+            (waiter, _) = self._waiters.pop()
             if exc is None:
                 waiter.cancel()
             else:
