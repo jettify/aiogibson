@@ -17,5 +17,3 @@ def go():
     yield from gibson.delete(b'foo')
 
 loop.run_until_complete(go())
-
-

@@ -1,12 +1,8 @@
 language: python
 
 python:
-    - "3.3"
-    - "3.4"
-
-env:
-    - PYTHONASYNCIODEBUG=1
-    - PYTHONASYNCIODEBUG=0
+    - 3.3
+    - 3.4
 
 install:
     - pip install pyflakes
@@ -19,8 +15,10 @@ install:
     - ./gibson -c ./debian/etc/gibson/gibson.conf --logfile /tmp/test_gibson.log --unix_socket /tmp/gibson.sock
     - sleep 3
     - cd ../
+    - pip install coveralls
 
 script:
-    - pyflakes aiogibson tests
-    - pep8 aiogibson tests
-    - python runtests.py -v
+    - make cov
+
+after_success:
+    - coveralls
