@@ -1,5 +1,5 @@
-Sphinx
 coverage
-pep8
-pyflakes
+flake8
+nose
+Sphinx
 sphinx-readable-theme==1.1.0

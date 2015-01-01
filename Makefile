@@ -1,7 +1,3 @@
-PYTHON ?= python3
-FLAKE ?= pyflakes
-PEP ?= pep8
-
 .PHONY: all flake doc test cov
 all: flake doc cov
 
@@ -9,14 +5,14 @@ doc:
 	make -C docs html
 
 flake:
-	$(FLAKE) aiogibson tests examples
-	$(PEP) aiogibson tests examples
+	flake8 aiogibson tests
 
-test:
-	$(PYTHON) runtests.py -v
+test: flake
+	nosetests -s $(FLAGS) ./tests/
 
-cov coverage: flake
-	$(PYTHON) runtests.py --coverage
+cov cover coverage:
+	nosetests -s --with-cover --cover-html --cover-branches $(FLAGS) --cover-package aiogibson ./tests/
+	@echo "open file://`pwd`/cover/index.html"
 
 clean:
 	find . -name __pycache__ |xargs rm -rf
