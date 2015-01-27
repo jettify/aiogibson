@@ -33,6 +33,12 @@ Code heavily reused from awesome aioredis_ library. ``GibsonPool``,
 ``GibsonConnection``, almost direct copy of ``RedisPool`` and
 ``RedisConnection``, so I highly recommend to checkout aioredis_.
 
+
+Documentation
+-------------
+http://aiogibson.readthedocs.org/
+
+
 Example
 -------
 
