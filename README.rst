@@ -39,6 +39,15 @@ Documentation
 http://aiogibson.readthedocs.org/
 
 
+Installation
+------------
+
+Make sure that you have gibson_ server compiled and running. The easiest way
+to install *aiogibson* is by using the package on PyPi::
+
+   pip install aiogibson
+
+
 Example
 -------
 
