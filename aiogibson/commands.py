@@ -202,13 +202,22 @@ class Gibson:
         """
         return self._conn.execute(b'mset', prefix, value)
 
-    def mget(self, prefix):
+    def mget(self, prefix, limit=None):
         """Get the values for keys with given prefix.
 
         :param prefix: prefix for keys.
+        :param limit: maximum number of returned key/value paris.
         :return: ``list`` of key/value pairs
+        :raises TypeError: if limit argument is not ``int``
         """
-        return self._conn.execute(b'mget', prefix)
+        if (limit is not None) and (not isinstance(limit, int)):
+            raise TypeError('limit must be int')
+
+        if limit is None:
+            resp = self._conn.execute(b'mget', prefix)
+        else:
+            resp = self._conn.execute(b'mget', prefix, limit)
+        return resp
 
     def mttl(self, prefix, expire=0):
         """Set the TTL for keys verifying the given prefix.
