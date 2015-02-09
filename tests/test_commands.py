@@ -122,8 +122,7 @@ class CommandsTest(GibsonTest):
                              b'memory_fragmentation',
                              b'item_size_avg', b'compr_rate_avg',
                              b'reqs_per_client_avg'])
-
-        self.assertEqual(test_keys, expected_keys)
+        self.assertTrue(expected_keys.issubset(test_keys))
 
     @run_until_complete
     def test_keys(self):
@@ -182,6 +181,20 @@ class CommandsTest(GibsonTest):
         self.assertEqual(res, 2)
         res = yield from self.gibson.mget(b'test:mset')
         self.assertEqual(res, [key1, b'42', key2, b'42'])
+
+    @run_until_complete
+    def test_mget_limit(self):
+        key1, value1 = b'test:mget_limit:1', b'10'
+        key2, value2 = b'test:mget_limit:2', b'20'
+        key3, value3 = b'test:mget_limit:3', b'30'
+        yield from self.gibson.set(key1, value1, 100)
+        yield from self.gibson.set(key2, value2, 100)
+        yield from self.gibson.set(key3, value3, 100)
+        res = yield from self.gibson.mget(b'test:mget_limit', 2)
+        self.assertEqual(len(res), 2*2)
+        self.assertEquals(res, [key1, value1, key2, value2])
+        with self.assertRaises(TypeError):
+            yield from self.gibson.mget(key1, limit='one')
 
     @run_until_complete
     def test_mttl(self):

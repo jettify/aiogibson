@@ -38,6 +38,8 @@ class GibsonTest(BaseTest):
             self.gibson_socket, loop=self.loop))
 
     def tearDown(self):
+        if not self.gibson.closed:
+            self.loop.run_until_complete(self.gibson.mdelete('test:'))
         self.gibson.close()
         self.loop.run_until_complete(self.gibson.wait_closed())
         del self.gibson
