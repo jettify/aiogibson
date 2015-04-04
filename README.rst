@@ -141,7 +141,7 @@ Multi Commands
         # return list of keys with given prefix ``fo``
         yield from gibson.keys(b'fo')
 
-        # count items for a given prefi
+        # count items for a given prefix
         info = yield from gibson.stats()
 
 
