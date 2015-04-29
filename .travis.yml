@@ -9,8 +9,8 @@ install:
     - pip install nose
     - pip install .
     - wget https://github.com/evilsocket/gibson/archive/$GB.tar.gz
-    - tar xfv 1.1.0.tar.gz
-    - cd gibson-1.1.0
+    - tar xfv $GB.tar.gz
+    - cd gibson-$GB
     - cmake . && make
     - ./gibson -c ./debian/etc/gibson/gibson.conf --logfile /tmp/test_gibson.log --unix_socket /tmp/gibson.sock
     - sleep 3
